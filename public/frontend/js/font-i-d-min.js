@@ -1,0 +1,1 @@
+$(document).ready(function(){function e(e){var n=$("p"),c=parseInt(n.css("font-size"));"Decrese"==e?c-=1:"Increase"==e?c+=1:"CurrentSize"==e&&(c=14),n.css("font-size",c)}$("#linkIncrease").click(function(){e("Increase")}),$("#linkDecrese").click(function(){e("Decrese")}),$("#linkCurrentSize").click(function(){e("CurrentSize")})});

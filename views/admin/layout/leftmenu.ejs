@@ -1,0 +1,60 @@
+<div class="admin-panel-left-sidebar">
+
+        <div class="admin-panel-user-profile">
+            <h5>ADMIN</h5>
+        </div>
+        <input type="hidden" id="csrf" value="<%=locals.csrfToken%>"/>
+        <nav class="admin-panel-main-nav">
+            <ul class="admin-panel-main-nav-ul" id="nav-container">
+                <li> <a href="/admin/index"><span class="fa fa-home"></span> Home </a></li>
+            </ul>
+        </nav>
+    </div>
+
+<script>
+
+$(document).ready(function(){
+    $.ajax({
+            url:"/getNavData?_csrf="+$("#csrf").val(),
+            method:"POST",
+            success:function(res){
+                var modules = res.modules;
+                var functions = res.functions;
+                for(var i = 0;i<res.modules.length;i++){
+
+                    var nav = '<li class="" onclick=get("'+modules[i].TMM_Module+'") id="module'+modules[i].TMM_Module+'">'+
+                                '<a href="#"> <span class="'+modules[i].TMM_Modl_Logo+'" style="margin-right:5px;"></span>'+
+                                 modules[i].TMM_Modl_Name+'<span class="sub-arrow"></span></a>'+
+                                '<ul id=\"function'+modules[i].TMM_Module+'\">'+
+                                '</ul>'+
+                            '</li>';
+                    $("#nav-container").append(nav);
+                    var str =  "";
+                    for(var j = 0;j <res.functions.length;j++){
+                        if(modules[i].TMM_Module == functions[j].TFM_Module){
+                             str +='<li><a href="'+functions[j].TFM_Function_URL+'">'+
+                            functions[j].TFM_Function_Name+'</a></li>';
+                        }
+                    }
+                    $("#function"+modules[i].TMM_Module).append(str);
+                }
+            },
+            error:function(err){
+                console.log(err)
+               // location.reload();
+            }
+        })
+})
+
+function get(id){
+    var nid = "#function"+(id);
+    currentid = "function"+id;
+    $("#nav-container li ul").each(function () {
+      if($(this).css('display') == 'block' && $(this).attr('id') != currentid ){
+        //$(this).css('display','none');
+        $(this).slideToggle();
+      }
+    })
+    $(nid).slideToggle();
+}
+</script>

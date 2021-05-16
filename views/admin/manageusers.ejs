@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<%-include('layout/headscript')-%>
+
+<script src="/frontend/Scripts/highcharts.js"></script>
+<script src="/frontend/Scripts/exporting.js"></script>
+<style type="text/css">
+#function li{
+  margin-left: 35px;
+}
+.pagination{
+  display:flex;
+  float:right;
+}
+.pagination li{
+  margin:2px;
+}
+.row{
+  --margin-left:0px !important;
+}
+
+</style>
+</head>
+
+<body>
+
+<%-include('layout/header')-%>
+<div class="row">
+<%-include('layout/leftmenu')-%>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="admin-panel-pager">
+    <!-- Main content -->
+    <section class="content">
+        <section class="content-header">
+          <h1>Manage Users</h1>
+        </section>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="">
+            <input type="hidden" id="csrf" value="<%=locals.csrfToken%>"/>
+            <!-- /.box-header -->
+            <div class="box-body">
+            	<div id="demo">
+                    <div class="search-field">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="org-name">User ID</div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <input class="form-control" type="text" placeholder="" name="" id="param1">
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button class="btn btn-primary" onClick="searchData()">Search</button>
+                                </div>
+                            </div>
+                            <!--div class="col-md-5">
+                                <div class="form-group pull-right">
+                                    <a href="/admin/manage-contents-add"><button class="btn btn-primary"> Content</button></a>
+                                </div>
+                            </div-->
+                        </div>
+                    </div>
+                </div>
+                <!--<a data-toggle="collapse" data-target="#demo"
+                    class="showhideangelbg"><i class="fa fa-angle-double-down"></i>
+                </a>-->
+              <table id="listAllCostCenter" style="width:100%;" class="table table-bordered">
+                <thead>
+                <tr>
+                  <th>UserID</th>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Mobile</th>
+                  <th>IsOfficial</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+</div>
+  <!-- /.content-wrapper -->
+</div>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="/browser_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+<!-- DataTables -->
+<script src="/browser_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/browser_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script>
+  $(function () {
+	$('#listAllCostCenter').DataTable({
+		'processing' : true,
+		'serverSide' : true,
+		'searching' : false,
+		'ordering' : false,
+		"ajax" : {
+			'url' : 'viewusers-throughAjax',
+			'data' : function(d) {
+				d.param1 = $('#param1').val();
+			}
+		},
+		'dataSrc' : "",
+		'columns' : [ {
+			'data' : 'userid'
+		}, {
+			'data' : 'username'
+		}, {
+      'data' : 'email'
+    }, {
+      'data' : 'mobileno'
+    }, {
+      'data' : 'isofficial'
+    }, {
+      'data' : 'status'
+    }, {
+			'data' : 'action'
+		}
+
+		]
+	});
+
+  });
+  //Method For Searching Records In The List
+	function searchData() {
+		$('#listAllCostCenter').DataTable().draw();
+	}
+
+  function changeUserStatus(userid,status) {
+    var message = status === 'Active' ? 'InActive This User?':'Active This User?';
+    var successMessage = status === 'Active' ? 'User Deactivated Successfully':'User Activated Successfully';
+    swal.fire({
+      title: message,
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#77e790",
+      confirmButtonText: "Submit",
+      showLoaderOnConfirm: true,
+      reverseButtons: true,
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: 'Cancel',
+      cancelButtonAriaLabel: 'Thumbs down',
+      preConfirm: () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              console.log("Doing async operation");
+              resolve()
+            }, 2000)
+          })
+        }
+      }).then((result) => {
+        if (result.value) {
+          var data = {
+            userid:userid,
+            _csrf:$('#csrf').val()
+          };
+          $.ajax({
+            url:'viewusers-changeUserStatus',
+            method:'post',
+            data:data,
+            success:function(res){
+              if(res.message == 'success'){
+                swal.fire({
+                  title: 'Done',
+                  text: successMessage,
+                  type: "success",
+                }).then(res=>{location.reload();});
+              }else{
+                swal.fire({
+                  title: res.message,
+                  text: "Plese Try after some time",
+                  type: "warning",
+                })
+              }
+            },
+            error:function (err) {
+              console.error(err);
+              swal.fire({
+                title: 'Something Went Wrong',
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          })
+        }
+      })
+  }
+
+  function changeOfficialStatus(userid,IsOfficial) {
+    var message = IsOfficial === 'No' ? 'Mark This User Official':'Mark This User UnOfficial?';
+    swal.fire({
+      title: message,
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#77e790",
+      confirmButtonText: "Submit",
+      showLoaderOnConfirm: true,
+      reverseButtons: true,
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: 'Cancel',
+      cancelButtonAriaLabel: 'Thumbs down',
+      preConfirm: () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              console.log("Doing async operation");
+              resolve()
+            }, 2000)
+          })
+        }
+      }).then((result) => {
+        if (result.value) {
+          var data = {
+            userid:userid,
+            _csrf:$('#csrf').val()
+          };
+          $.ajax({
+            url:'viewusers-changeOfficialStatus',
+            method:'post',
+            data:data,
+            success:function(res){
+              if(res.message == 'success'){
+                swal.fire({
+                  title: 'Done',
+                  text: 'User Official status changed successfully',
+                  type: "success",
+                }).then(res=>{location.reload();});
+              }else{
+                swal.fire({
+                  title: res.message,
+                  text: "Plese Try after some time",
+                  type: "warning",
+                })
+              }
+            },
+            error:function (err) {
+              console.error(err);
+              swal.fire({
+                title: 'Something Went Wrong',
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          })
+        }
+      })
+  }
+
+</script>
+<script src="/frontend/js/adminside.js"></script>
+<!-- End Browser Link -->
+
+</body>
+
+</html>

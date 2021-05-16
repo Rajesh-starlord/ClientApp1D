@@ -1,0 +1,96 @@
+
+<html>
+
+<head>
+
+<%-include('layout/headscript')-%>
+
+<script src="/frontend/Scripts/highcharts.js"></script>
+<script src="/frontend/Scripts/exporting.js"></script>
+<style media="screen">
+  .dash-card{
+    height: 100px;
+    padding: 2px;
+  }
+  .da-card{
+    height: 98px;
+    box-shadow: 0px 2px 3px -2px;
+  }
+  .row{
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .card-content{
+    float: left;
+    height: 98px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background-color: lavender;
+  },
+  .digit{
+    font-size: 4rem;
+  }
+</style>
+</head>
+
+<body>
+
+<%-include('layout/header')-%>
+<div class="row">
+<%-include('layout/leftmenu')-%>
+
+    <div class="admin-panel-pager">
+        <div class="col-lg-12" style="text-align:center;">
+            WELCOME ADMIN
+        </div>
+        <div class="row" style="display:flex;">
+          <div class="col-lg-3 dash-card">
+            <div class="da-card">
+              <div class="card-content">
+                <h1>Total Users</h1>
+              </div>
+              <div class="card-content">
+                <span class="digit"style="font-size:4rem"><%=DashData.totalUsers%></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 dash-card">
+            <div class="da-card">
+              <div class="card-content">
+                <h1>Total Posts</h1>
+              </div>
+              <div class="card-content">
+                <span class="digit"style="font-size:4rem"><%=DashData.totalPosts%></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 dash-card">
+            <div class="da-card">
+              <div class="card-content">
+                <h1>Pending Reward Requests</h1>
+              </div>
+              <div class="card-content">
+                <span class="digit" style="font-size:4rem"><%=DashData.totalPendingRewards%></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 dash-card">
+            <div class="da-card">
+              <div class="card-content">
+                <h1>Reward Claimed</h1>
+              </div>
+              <div class="card-content">
+                <span class="digit" style="font-size:4rem"><%=DashData.totalClaimedRewards%></span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+<script src="/frontend/js/adminside.js"></script>
+<!-- End Browser Link -->
+</div>
+</body>
+
+</html>

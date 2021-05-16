@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<%-include('layout/headscript')-%>
+
+<script src="/frontend/Scripts/highcharts.js"></script>
+<script src="/frontend/Scripts/exporting.js"></script>
+<style type="text/css">
+#function li{
+  margin-left: 35px;
+}
+.pagination{
+  display:flex;
+  float:right;
+}
+.pagination li{
+  margin:2px;
+}
+.row{
+  --margin-left:0px !important;
+}
+
+</style>
+</head>
+
+<body>
+
+<%-include('layout/header')-%>
+<div class="row">
+<%-include('layout/leftmenu')-%>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="admin-panel-pager">
+    <!-- Main content -->
+    <section class="content">
+        <section class="content-header">
+          <h1>Manage Rewards</h1>
+        </section>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="">
+            <!-- /.box-header -->
+            <div class="box-body">
+            	<div id="demo">
+                    <div class="search-field">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="org-name">Reward Status</div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <input class="form-control" type="text" placeholder="Approved or Pending" name="param1" id="param1">
+                                <!--input class="form-control" type="radio" placeholder="Pending" name="param1" id="param1">
+                                <input class="form-control" type="radio" placeholder="All" name="param1" id="param1"-->
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button class="btn btn-primary" onClick="searchData()">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-2">
+                              <div class="org-name">Minimum Claim Amount</div>
+                          </div>
+                          <div class="col-md-3 col-lg-3">
+                              <input class="form-control" type="number" placeholder="Enter An Amount" value="<%=minclaimamount%>" id="minclaimamount">
+                          </div>
+                          <div class="col-md-2">
+                              <div class="form-group">
+                                <input type="button" class="btn btn-success" value="Update" id="updateMinClaimAmountBtn">
+                              </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-2">
+                              <div class="org-name">Reward Factor</div>
+                          </div>
+                          <div class="col-md-3 col-lg-3">
+                            <input class="form-control" type="number" placeholder="Enter An Amount"  value="<%=rewardfactor%>" id="rewardfactor">
+                          </div>
+                          <div class="col-md-2">
+                              <div class="form-group">
+                                <input type="button" class="btn btn-success" value="Update" id="updateRewardFactorBtn">
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+              <table id="listAllCostCenter" style="width:max-content;" class="table table-bordered table-responsive">
+                <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Reward ID</th>
+                  <th>Requested Amount</th>
+                  <th>Requested On</th>
+                  <th>Transaction Method</th>
+                  <th>Status</th>
+                  <th>Reward Collected</th>
+                  <th>Collected On</th>
+                  <th>Transaction ID</th>
+                  <th>Approved By</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- Modal -->
+    <div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <input type="hidden" id="csrf" value="<%=locals.csrfToken%>"/>
+              <div class="form-group row">
+                <label for="amount" class="col-sm-2 col-form-label">Amount</label>
+                <div class="col-sm-10">
+                  <input type="number" class="form-control-plaintext" id="amount" value="" readonly>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="transid" class="col-sm-2 col-form-label">Transaction ID</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="transid" placeholder="Transaction ID">
+                </div>
+              </div>
+              <div class="form-group">
+                <input type="button" class="btn btn-success" id="submit" value="Submit"/>
+                <input type="button" name="" id="reset" class="btn btn-danger" value="Cancel">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---modal end--->
+
+</div>
+  <!-- /.content-wrapper -->
+</div>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="/browser_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+<!-- DataTables -->
+<script src="/browser_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/browser_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script>
+  $(function () {
+	$('#listAllCostCenter').DataTable({
+		'processing' : true,
+		'serverSide' : true,
+		'searching' : false,
+		'ordering' : false,
+		"ajax" : {
+			'url' : 'rewardDetails-throughAjax',
+			'data' : function(d) {
+        if($('#param1').val()){
+          let status = $('#param1').val().toUpperCase();
+          if(status === 'APPROVED'){
+            d.param1 = 1;
+          }else if (status === 'PENDING') {
+            d.param1 = 0;
+          }else {
+              d.param1 = 3;
+          }
+        }else {
+          d.param1 = '';
+        }
+			}
+		},
+		'dataSrc' : "",
+		'columns' : [ {
+			'data' : 'userid'
+		}, {
+      'data' : 'rewardid'
+    }, {
+      'data' : 'requestedamount'
+    }, {
+      'data' : 'requestedon'
+    },{
+      'data' : 'transactionmethod'
+    }, {
+      'data' : 'status'
+    }, {
+			'data' : 'amountclaimed'
+		} ,{
+			'data' : 'claimedon'
+		} ,{
+			'data' : 'transactionid'
+		} ,{
+			'data' : 'updatedby'
+		},{
+			'data' : 'action'
+		}
+		]
+	});
+
+  });
+  //Method For Searching Records In The List
+	function searchData() {
+		$('#listAllCostCenter').DataTable().draw();
+	}
+
+  function approveReward(id,amount) {
+    $('#amount').val(parseFloat(amount));
+    $('#mymodal').modal('show');
+    $('#reset').on('click',function() {
+      $('#transid').val('');
+    })
+    $('#submit').on('click',function() {
+      let transid = $('#transid').val();
+      if(!transid){
+        alert('transactionid required');
+      }else {
+          submitApproval(id,amount,transid);
+      }
+    })
+  }
+
+  function submitApproval(id,amount,transid) {
+    swal.fire({
+      title: "Are you sure want to Submit?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#77e790",
+      confirmButtonText: "Submit",
+      showLoaderOnConfirm: true,
+      reverseButtons: true,
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: 'Cancel',
+      cancelButtonAriaLabel: 'Thumbs down',
+      preConfirm: () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              console.log("Doing async operation");
+              resolve()
+            }, 2000)
+          })
+        }
+      }).then((result) => {
+        if (result.value) {
+          var data = {
+            rewardid:id,
+            claimedamount:amount,
+            trxid:transid,
+            _csrf:$('#csrf').val()
+          };
+          $.ajax({
+            url:'rewardDetails-approve',
+            method:'post',
+            data:data,
+            success:function(res){
+              if(res.message == 'success'){
+                swal.fire({
+                  title: 'Done',
+                  text: "Approved Saved Successfully",
+                  type: "success",
+                }).then(res=>{location.reload();});
+              }else{
+                swal.fire({
+                  title: res.message,
+                  text: "Plese Try after some time",
+                  type: "warning",
+                })
+              }
+            },
+            error:function (err) {
+              console.error(err);
+              swal.fire({
+                title: 'Something Went Wrong',
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          })
+        }
+      })
+    }
+
+    $(document).ready(function() {
+      $('#updateMinClaimAmountBtn').on('click',function() {
+        updateMinClaimAmount();
+      })
+      $('#updateRewardFactorBtn').on('click',function () {
+        updateRewardFactor();
+      })
+    })
+
+    function updateMinClaimAmount() {
+      if($('#minclaimamount').val()){
+        var data = {
+          minClaimAmount:$('#minclaimamount').val(),
+          _csrf:$('#csrf').val()
+        };
+        $.ajax({
+          url:'rewardDetails-updateminclaimamount',
+          method:'post',
+          data:data,
+          success:function(res){
+            if(res.message == 'success'){
+              swal.fire({
+                title: 'Done',
+                text: "Data Saved Successfully",
+                type: "success",
+              }).then(res=>{$('#minclaimamount').val(res.body.minclaimamount)});
+            }else{
+              swal.fire({
+                title: res.message,
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          },
+          error:function (err) {
+            console.error(err);
+            swal.fire({
+              title: 'Something Went Wrong',
+              text: "Plese Try after some time",
+              type: "warning",
+            })
+          }
+        })
+      }else {
+        swal('Enter A Valid Amount');
+      }
+    }
+
+    function updateRewardFactor() {
+      if($('#rewardfactor').val()){
+        var data = {
+          minClaimAmount:$('#rewardfactor').val(),
+          _csrf:$('#csrf').val()
+        };
+        $.ajax({
+          url:'rewardDetails-updaterewardfactor',
+          method:'post',
+          data:data,
+          success:function(res){
+            if(res.message == 'success'){
+              swal.fire({
+                title: 'Done',
+                text: "Data Saved Successfully",
+                type: "success",
+              }).then(res=>{$('#rewardfactor').val(res.body.rewardfactor)});
+            }else{
+              swal.fire({
+                title: res.message,
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          },
+          error:function (err) {
+            console.error(err);
+            swal.fire({
+              title: 'Something Went Wrong',
+              text: "Plese Try after some time",
+              type: "warning",
+            })
+          }
+        })
+      }else {
+        swal('Enter A Valid Amount');
+      }
+    }
+</script>
+<script src="/frontend/js/adminside.js"></script>
+<!-- End Browser Link -->
+
+</body>
+
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html>
+
+
+<!-- Mirrored from industrialwaterod.nic.in/Home/Dashboard by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Dec 2020 05:22:29 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <title>ADMIN PANEL CHIEF ENGINEER WATER SERVICES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../CSS/res.css" rel="stylesheet" />
+    <link href="../CSS/style.css" rel="stylesheet" />
+
+    <script src="../js/jquery-3.2.1.min.js"></script>
+
+    <script src="../js/custom.js"></script>
+    <script src="../js/newsticker.js"></script>
+    <script src="../js/font-i-d-min.js"></script>
+    <script src="../js/font-Increment.decrement.js"></script>
+
+    <link href="../CSS/Loader.css" rel="stylesheet" />
+    <link href="../jquery-ui-1.12.1.custom/jquery-ui.css" rel="stylesheet" />
+    <script src="../jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="../jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+
+    <script src="../Scripts/1.5.8.angular.min.js"></script>
+    <script src="../Scripts/WaterResource_Script.js"></script>
+    <script src="../Scripts/angular-filter.js"></script>
+
+    <script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="../Scripts/highcharts.js"></script>
+    <script src="../Scripts/highcharts-3d.js"></script>
+    <script src="../Scripts/exporting.js"></script>
+    <script src="../Scripts/export-data.js"></script>
+    <style type="text/css">
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 40px;
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        /*For dashboard in D3*/
+        .axis path,
+        .axis line {
+            fill: none;
+            font: 10px sans-serif;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .legend {
+            padding: 5px;
+            font: 10px sans - serif;
+            background: yellow;
+            box-shadow: 2px 2px 1px #888;
+        }
+
+        .tooltip {
+            background: rgb(238, 249, 250);
+            /*box-shadow: 0 0 5px #999999;*/
+            color: #333;
+            display: none;
+            font-size: 13px;
+            left: 130px;
+            /*padding: 10px;*/
+            position: absolute;
+            text-align: center;
+            /*top: 100px;*/
+            height: 65px;
+            width: 155px;
+            z-index: 10;
+            border-radius: 2px 1px 2px 1px 2px;
+            /*fill:;*/
+            /*background: #eee;
+            box-shadow: 0 0 5px #999999;
+            color: #333;
+            font-size: 12px;
+            left: 130px;
+            padding: 10px;
+            position: absolute;
+            text-align: center;
+            top: 95px;
+            z-index: 10;
+            display: block;
+            opacity: 0;*/
+        }
+    </style>
+
+</head>
+
+<body ng-app="WaterResourceApp" ng-controller="WaterResourceController" ng-init="BindDivisionCEWS();start_Chart();">
+    
+<form action="http://industrialwaterod.nic.in/Home/DashBoard" id="my_form" method="post"><input name="__RequestVerificationToken" type="hidden" value="JWdxziKzpKDwdv9MAT71C7Ktw611OJlOOQgta_CMhSkbSWdc2zuLPGj_9yCxkNZvhcsos-kea-Riy3pIqvMHc4Te631j-mEDtdKpGtDe12Q1" /></form>    <div data-loading></div>
+    <div class="admin-panel-navbar">
+        <div class="admin-panel-logo">
+            <img src="../Images/admin-logo.png" alt="admin-logo">
+        </div>
+    </div>
+
+
+
+
+    <div class="admin-panel-pager" style="width:100% !important">
+        
+        
+        <div class="box box-6">
+            <div class="box-panel">
+                <div class="box-panel-header">
+                    <h5 class="text-blue"> <i class="fa fa-tint text-blue"></i> State Target vs Achivement </h5>
+                </div>
+                <div class="box-panel-body" style="height:300px;">
+                    <div id="State" style="height:300px;"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="box box-6">
+            <div class="box-panel">
+                <div class="box-panel-header">
+                    <h5 class="text-blue"> <i class="fa fa-tint text-blue"></i> Total Target vs Achivement </h5>
+                </div>
+                <div class="box-panel-body" style="height:300px;">
+                    <div class="row">
+
+                        <div class="box box-1">
+                            <label> Division</label>
+                        </div>
+                        <div class="box box-1" style="padding-left:20px"> <span class="asterisk">*</span> </div>
+                        <div class="box box-3">
+                            <select ng-model="ddlDivision" ng-change="changeDivision(ddlDivision);">
+                                <option value="">--Select--</option>
+                                <option ng-repeat="dt in lst_Bind_Division" value="{{dt.EE_UserID}}">{{dt.EE_Name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="box box-2" style="padding-left:20px">
+                            <label> Financial Year</label>
+                        </div>
+                        <div class="box box-1"><span class="asterisk">*</span></div>
+                        <div class="box box-3">
+                            <select ng-model="ddlFYear" ng-change="Load_Chart(ddlFYear,ddlDivision);">
+                                <option value="">--Select--</option>
+                                <option value="2017">2017-18</option>
+                                <option value="2018">2018-19</option>
+                                <option value="2019">2019-20</option>
+                                <option value="2020">2020-21</option>
+                                <option value="2021">2021-22</option>
+                                <option value="2022">2022-23</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div id="Total" style="height:300px;"></div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="box box-6">
+            <div class="box-panel">
+                <div class="box-panel-header">
+                    <h5 class="text-blue"> <i class="fa fa-tint text-blue"></i> Collection Trend </h5>
+                </div>
+                <div class="box-panel-body" style="height:300px;">
+                    <div id="collection" style="height:300px;"></div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+        <div class="box box-6">
+            <div class="box-panel">
+                <div class="box-panel-header">
+                    <h5 class="text-blue"> <i class="fa fa-tint text-blue"></i> Contribution of Division </h5>
+                </div>
+                <div class="box-panel-body" style="height:300px;">
+                    <button id="myBtn">Exapnd</button>
+                    <div id="contibution" style="height:300px;"></div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div>
+                <div id="contibution_expand" style="height:500px;"></div>
+
+            </div>
+
+        </div>
+        <script>
+            //Highcharts.chart('Total', {
+            //    chart: {
+            //        type: 'column'
+            //    },
+            //    title: {
+            //        text: 'Target Vs Achivement'
+            //    },
+            //    subtitle: {
+            //        text: '2017-18'
+            //    },
+            //    xAxis: {
+            //        categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+            //        crosshair: true
+            //    },
+            //    yAxis: {
+            //        min: 0,
+            //        title: {
+            //            text: 'Figures (Rs. In Crore)'
+            //        }
+            //    },
+            //    colors: [
+            //        '#4572A7',
+            //        '#AA4643'
+
+            //    ],
+            //    credits: {
+            //        enabled: false
+            //    },
+            //    tooltip: {
+            //        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            //        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            //            '<td style="padding:0"><b>{point.y:.2f}Cr.</b></td></tr>',
+            //        footerFormat: '</table>',
+            //        shared: true,
+            //        useHTML: true
+            //    },
+            //    plotOptions: {
+            //        column: {
+            //            pointPadding: 0.2,
+            //            borderWidth: 0
+            //        }
+            //    },
+            //    series: [{
+            //        name: 'Target',
+            //        data:
+            //            [5553.37, 3953.34, 4728.42, 9149.23, 4380.38, 4305.52, 6007.71, 5682.28, 5861.94, 7141.48, 6976.22, 7021.01]
+
+            //    }, {
+            //        name: 'Achievement',
+            //        data: [4370.97, 2283.17, 2683.86, 2284.28, 2673.50, 2581.04, 2901.69, 2449.57, 3000.85, 3326.48, 1276.59, 0.00]
+
+            //    }]
+            //});
+
+            Highcharts.chart('State', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Target Vs Achivement'
+                },
+                subtitle: {
+                    text: '2012-13 to 2018-19'
+                },
+                xAxis: {
+                    categories: [
+
+                        '2012-13',
+                        '2013-14',
+                        '2014-15',
+                        '2015-16',
+                        '2016-17',
+                        '2017-18',
+                        '2018-19'
+
+                    ],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Figures (Rs. In Crore)'
+                    }
+                },
+                colors: [
+                    '#4572A7',
+                    '#AA4643'
+
+                ],
+                credits: {
+                    enabled: false
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.2f}Cr.</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Target',
+                    data: [322.00, 375.00, 450.00, 550.00, 650.00, 720.00, 750.00]
+
+                }, {
+                    name: 'Achievement',
+                    data: [330.97, 359.79, 557.76, 593.298, 567.57, 560.45, 587.96]
+
+                }]
+            });
+
+
+
+
+        </script>
+        <script type="text/javascript">
+
+            Highcharts.chart('collection', {
+
+                title: {
+                    text: 'Collection Trend'
+                },
+
+                subtitle: {
+                    text: '(2012-13 to 2018-19)'
+                },
+
+                yAxis: {
+                    title: {
+                        text: 'Figures (Rs In Crore)'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                xAxis: {
+                    categories: ['2012-13', '2013-14', '2014-15', '2015-16', '2016-17', '2017-18', '2018-19']
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        },
+
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Collection',
+                    data: [330.97, 359.79, 557.76, 593.298, 567.57, 560.45, 587.96]
+                }],
+
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+
+            });
+            // Build the chart
+            Highcharts.chart('contibution', {
+                chart: {
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    }
+                },
+                title: {
+                    text: 'Contribution of Division'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: 35,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Contribution',
+                    data: [
+                        ['Main Dam Division', 14251.18],
+                        ['Angul Irr. Division', 10707.28],
+                        ['Head Works Division', 7412.06],
+                        ['RRCD-II', 3633.73],
+                        ['Mahanadi South Division No. I', 3504.67],
+                        ['Sundargarh Irr. Division', 3057.56],
+                        ['Baitarani Division', 3036.46],
+                        ['Jaraka Irrigation Division', 2772.32],
+                        ['U.K.H.W.', 2537.86],
+                        ['Burla Irr. Division', 1113.94],
+                        ['Mahanadi North Division-I', 918.99],
+                        ['Balasore Irr. Division', 645.82],
+                        ['Harabhangi Irr.  Division', 638.39],
+                        ['Kalahandi Irr. Division', 356.34],
+                        ['Salandi Canal Division', 304.51],
+                        ['Bhanjanagar Irr. Division', 250.90],
+                        ['Earth Dam Division', 215.26],
+                        ['UILCD-I', 195.38],
+                        ['Canal Division', 183.72],
+                        ['Others', 308.68],
+                    ]
+                }]
+            });
+            Highcharts.chart('contibution_expand', {
+                chart: {
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    }
+                },
+                title: {
+                    text: 'Contribution of Division'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        depth: 35,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.name}'
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Contribution',
+                    data: [
+                        ['Main Dam Division, Burla', 14251.18],
+                        ['Angul Irr. Division, Angul', 10707.28],
+                        ['Head Works Division, Samal', 7412.06],
+                        ['RRCD-II,Dhenkanal', 3633.73],
+                        ['Mahanadi South Division No. I, Jobra', 3504.67],
+                        ['Sundargarh Irr. Division, Sundargarh', 3057.56],
+                        ['Baitarani Division, Salapada', 3036.46],
+                        ['Jaraka Irrigation Division, Jarka', 2772.32],
+                        ['U.K.H.W.,Division', 2537.86],
+                        ['Burla Irr. Division, Burla', 1113.94],
+                        ['Mahanadi North Division-I, Jagatpur', 918.99],
+                        ['Balasore Irr. Division, Balasore', 645.82],
+                        ['Harabhangi Irr.  Division, Adava, Gajapati', 638.39],
+                        ['Kalahandi Irr. Division, Kalahandi', 356.34],
+                        ['Salandi Canal Division, Bhadrak', 304.51],
+                        ['Bhanjanagar Irr. Division, Bhanjanagar', 250.90],
+                        ['Earth Dam Division, Chitrakonda', 215.26],
+                        ['UILCD-I,Kusumakhunti', 195.38],
+                        ['Canal Division, Baragarh', 183.72],
+                        ['Others', 308.68],
+                    ]
+                }]
+            });
+        </script>
+        <script type="text/javascript">
+            // Get the modal
+            var modal = document.getElementById('myModal');
+
+            // Get the button that opens the modal
+            var btn = document.getElementById("myBtn");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks the button, open the modal
+            btn.onclick = function () {
+                modal.style.display = "block";
+            }
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
+        <script src="../../code.jquery.com/jquery-2.2.4.min.js"></script>
+        <script type="text/javascript" src="../../cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+        
+        <script>
+            var app = angular.module('WaterResourceApp', [])
+                .controller('WaterResourceController', function ($scope, $http, $location, $filter, $timeout, $window) {
+                    var token = document.getElementsByName('__RequestVerificationToken')[0].value;
+                    $scope.changeDivision = function () {
+                        $scope.ddlFYear = "";
+                    }
+                    $scope.changefyyr = function () {
+                        $scope.ddlFMonths = "";
+                    }
+                    $scope.BindDivisionCEWS = function () {
+                        //debugger;
+                        $http({
+                            url: 'ddl_Division',
+                            method: "GET",
+                            datatype: 'json',
+                            headers: { '__RequestVerificationToken': token }
+                        }).then(function (response) {
+                            $scope.lst_Bind_Division = response.data;
+
+                        });
+                    }
+                    $scope.Load_Chart = function (ddlFYear, ddlDivision) {
+
+                        d3.select("body")
+                            .selectAll('#tooltipFrChart').style('display', 'none');
+                        $http({
+                            url: "Chart_data",
+                            method: "get",
+                            headers: { '__RequestVerificationToken': token },
+                            params: { FinancialYr: ddlFYear, divisionID: ddlDivision }
+                        }).success(function (data) {
+                            var py = ddlFYear;
+                            var ny = parseInt(ddlFYear) + 1;
+                            console.log(data);
+                            if (data.data[0].data.length != 0 && data.data[1].data.length != 0) {
+                                var seriesData = data.data;
+                                var stack = d3.layout.stack();
+                                var dataset = {
+                                    "categories": ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+                                    "series": [seriesData[0].name, seriesData[1].name],
+                                    "colors": ["rgb(220,20,60)", "#20B2AA"],
+                                    "layers": [
+                                        [
+                                            { "y0": seriesData[0].data[0], "month": "Apr" },
+                                            { "y0": seriesData[0].data[1], "month": "May" },
+                                            { "y0": seriesData[0].data[2], "month": "Jun" },
+                                            { "y0": seriesData[0].data[3], "month": "Jul" },
+                                            { "y0": seriesData[0].data[4], "month": "Aug" },
+                                            { "y0": seriesData[0].data[5], "month": "Sep" },
+                                            { "y0": seriesData[0].data[6], "month": "Oct" },
+                                            { "y0": seriesData[0].data[7], "month": "Nov" },
+                                            { "y0": seriesData[0].data[8], "month": "Dec" },
+                                            { "y0": seriesData[0].data[9], "month": "Jan" },
+                                            { "y0": seriesData[0].data[10], "month": "Feb" },
+                                            { "y0": seriesData[0].data[11], "month": "Mar" }
+                                        ],
+                                        [
+                                            { "y0": seriesData[1].data[0], "month": "Apr" },
+                                            { "y0": seriesData[1].data[1], "month": "May" },
+                                            { "y0": seriesData[1].data[2], "month": "Jun" },
+                                            { "y0": seriesData[1].data[3], "month": "Jul" },
+                                            { "y0": seriesData[1].data[4], "month": "Aug" },
+                                            { "y0": seriesData[1].data[5], "month": "Sep" },
+                                            { "y0": seriesData[1].data[6], "month": "Oct" },
+                                            { "y0": seriesData[1].data[7], "month": "Nov" },
+                                            { "y0": seriesData[1].data[8], "month": "Dec" },
+                                            { "y0": seriesData[1].data[9], "month": "Jan" },
+                                            { "y0": seriesData[1].data[10], "month": "Feb" },
+                                            { "y0": seriesData[1].data[11], "month": "Mar" }
+                                        ]
+                                    ]
+                                }
+                                //debugger;
+
+                                n = dataset["series"].length, // Number of Layers
+                                    m = dataset["layers"].length, // Number of Samples in 1 layer
+
+                                    yGroupMax = d3.max(dataset["layers"], function (layer) { return d3.max(layer, function (d) { return d.y0; }); });
+                                yGroupMin = 0;
+                                var margin = { top: 50, right: 50, bottom: 50, left: 60 },
+                                    width = 500 - margin.left - margin.right,
+                                    height = 265 - margin.top - margin.bottom;//300
+
+                                var x = d3.scale.ordinal()
+                                    .domain(dataset["categories"])
+                                    .rangeRoundBands([0, width], 0.40);
+
+                                var y = d3.scale.linear()
+                                    .domain([yGroupMin, yGroupMax])
+                                    .range([height, 0]);
+
+
+                                var xAxis = d3.svg.axis()
+                                    .scale(x)
+                                    .tickSize(5)
+                                    .tickPadding(6)
+                                    .orient("bottom");
+
+                                var yAxis = d3.svg.axis()
+                                    .scale(y)
+                                    .orient("left");
+
+                                var svg = d3.select('#Total')
+                                    .selectAll('#svgTotalBarChart')
+                                    .remove();
+
+
+                                svg = d3.select("#Total").append("svg").attr("id", "svgTotalBarChart")
+                                    .attr("width", width + margin.left + margin.right)
+                                    .attr("height", height + margin.top + margin.bottom)
+                                    .append("g")
+                                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                                var layer = svg.selectAll(".layer")
+                                    .data(dataset["layers"])
+                                    .enter().append("g")
+                                    .attr("class", "layer");
+                                var rect = layer.append("g").attr("filter", "url(#dropshadow)").selectAll("rect")
+                                    .data(function (d, i) { d.map(function (b) { b.colorIndex = i; return b; }); return d; })
+                                    .enter().append("rect").attr("id", "RectTotalBarChart")
+                                    .transition()
+                                    .duration(500)
+                                    .delay(function (d, i) { return i * 10; })
+                                    .attr("x", function (d, i, j) { return x(d.month) + x.rangeBand() / n * j; })
+                                    .attr("width", x.rangeBand() / n)
+                                    .transition()
+                                    .attr("y", function (d) { return y(d.y0) - 1; })//.attr("y", function (d) { return y(d); })
+                                    .attr("height", function (d) {
+                                        return height - y(d.y0);
+                                    })//.attr("height", function (d) { return height - y(d) })
+                                    .attr("class", "bar")
+                                    .style("fill", function (d) { return dataset["colors"][d.colorIndex]; })//.style("fill", function (d,i) { return dataset["colors"][i]; })
+
+                                /////////////////////
+                                var defs = layer.append("defs");
+
+                                var filter = defs.append("filter")
+                                    .attr("id", "dropshadow")
+
+                                //Create blur effect
+                                filter.append("feGaussianBlur")
+                                    .attr("in", "SourceAlpha") // Create blur effect acrossborder, SourceGraphic
+                                    .attr("stdDeviation", 3) // Amount of blur
+                                    .attr("result", "blur");
+
+                                //Drop Shadow - Intensity and direction of shadow
+                                filter.append("feOffset")
+                                    .attr("in", "blur")
+                                    .attr("dx", 5)
+                                    .attr("dy", 3)
+                                    .attr("result", "offsetBlur");
+                                var feMerge = filter.append("feBlend")
+                                    .attr("in", "SourceGraphic")
+                                    .attr("in2", "blurOut")
+                                    .attr("mode", "normal")
+
+
+
+
+                                svg.append("g")
+                                    .attr("class", "x axis")
+                                    .attr("transform", "translate(0," + height + ")")
+                                    .call(xAxis);
+
+                                svg.select("g")
+                                    .attr("class", "y axis")
+                                    .call(yAxis);
+
+                                svg.append("text")
+                                    .attr("x", (width / 3) - 10)
+                                    .attr("y", -20)
+                                    .attr("dx", ".71em")
+                                    .attr("dy", "-.71em")
+                                    .style("font-size", 15).text("Target Vs. Achievement");
+                                svg.append("text")
+                                    .attr("x", (width / 3) - 10)
+                                    .attr("y", -3)
+                                    .attr("dx", ".71em")
+                                    .attr("dy", "-.71em")
+                                    .style("font-size", 15).text("Financial year:" + py + "-" + ny);// + "-" + (fyyr+1));
+
+
+                                svg.append("g")
+                                    .attr("class", "y axis")
+                                    .call(yAxis)
+                                    .append("text")
+                                    .attr("transform", "rotate(-90)")
+                                    .attr("x", (height / 3) - 90)
+                                    .attr("y", -55)
+                                    .attr("dy", ".71em")
+                                    .style("text-anchor", "end")
+                                    .text("Figures(Rs. in Lakh)");
+                                svg.append("g")
+                                    .attr("class", "x axis")
+                                    .call(yAxis)
+                                    .append("text")
+                                    .attr("x", (width / 3) + 10)
+                                    .attr("y", 200)
+                                    .attr("dy", ".71em")
+                                    .style("text-anchor", "end")
+                                    .text("Target");
+                                svg.append("g")
+                                    .attr("class", "x axis")
+                                    .call(yAxis)
+                                    .append("text")
+                                    .attr("x", (width / 3) + 190)
+                                    .attr("y", 200)//237
+                                    .attr("dy", ".71em")
+                                    .style("text-anchor", "end")
+                                    .text("Achievement");
+                                svg.append("rect")
+                                    .attr("x", (width / 3) - 50)
+                                    .attr("y", 198)
+                                    .attr("width", 15)
+                                    .attr("height", 15)
+                                    .style("fill", "rgb(220,20,60)");
+                                svg.append("rect")
+                                    .attr("x", (width / 3) + 90)
+                                    .attr("y", 198)
+                                    .attr("width", 15)
+                                    .attr("height", 15)
+                                    .style("fill", "#20B2AA");
+                                d3.select("body")
+                                    .selectAll('.tooltip')
+                                    .remove();
+                                var tooltip = d3.select("body").select("#Total")
+                                    .append('div')
+                                    .attr('class', 'tooltip').attr('id', 'tooltipFrChart');
+                                svg.selectAll("#RectTotalBarChart")
+                                    .on('mouseover', function (d) {  // when mouse enters div
+                                        d3.select(this)
+                                            .transition()
+                                            //.duration(500)
+                                            .style("cursor", "pointer")
+                                        tooltip
+                                            .transition()  //Opacity transition when the tooltip appears
+                                            //.duration(500)
+                                            .style("opacity", "0.9")
+                                            .style("display", "block")//The tooltip appears
+                                        //.attr("x", (height - yScale(data.value) ))//this.getBoune)
+                                        //.attr("y", (height - yScale(data.value)))//this.range)   //function (d) { return yScale(d.value); }
+
+
+                                        tooltip
+                                            .html("Year:" + py + " - " + ny + "<br/>Month:" + d.month + "<br/>Value : " + d.y0)     //    + "<br/>Target : " + d.y0 + "")
+                                            //"<div id='thumbnail'><span style='font-size:10px'>" + dataset.count + "</span> <table><tr><td style='border: 1px solid #000;padding:5px;width:20px;'>month: </td><td style='border: 1px solid #000;padding:5px;width:20px;'><b>" + dataset.label + " </b></td></tr>" + "<tr><td style='border: 1px solid #000;'>data: </td><td style='border: 1px solid #000;'><b>" + dataset.count + " </b></td></tr></table></div>")
+                                            .style("left", (d3.event.pageX - 75) + "px")
+                                            .style("top", (d3.event.pageY - 80) + "px")//d3.event.getBoundingClientRect().target.height+30)//data.value))//
+                                    })
+                                    .on('mouseout', function () {
+                                        tooltip.style('display', 'none');
+                                        //tooltip.style('opacity', 0);
+                                    })
+                                    //on('mouseover', function (d) {
+                                    //    if (!d.month) return null;
+
+                                    //    tooltip.select('.month').html("<b>" + d.month + "</b>");
+                                    //    tooltip.select('.tempRange').html("y:" + d.y + " y1: " + d.y0);//d.y + "&#8451; to " + d.y0 + "&#8451;");
+
+                                    //    tooltip.style('display', 'block');
+                                    //    tooltip.style('opacity', 2);
+                                    .on('mousemove', function (d) {
+
+                                        if (!d.month) return null;
+
+                                        tooltip.style('top', (d3.event.pageY - 80) + 'px')
+                                            .style('left', (d3.event.pageX - 75) + 'px');
+                                    });
+                            }
+                            else {
+                                //debugger;
+                                var svg = d3.select('#Total')
+                                    .selectAll('#svgTotalBarChart')
+                                    .remove();
+                                d3.select("body")
+                                    .selectAll('div').select("#tooltipFrChart").remove();
+                            }
+                        })
+                    }
+
+                    $scope.start_Chart = function () {
+                        //$http({
+                        //    url: "getmxyr",
+                        //    method: "get",
+                        //    headers: { '__RequestVerificationToken': token },
+                        //}).success(function (data) {
+                        var nowMonth = new Date().getMonth();
+                        var nowYr = 0;
+                        if (nowMonth <= 3)
+                            nowYr = new Date().getFullYear() - 1;
+                        else
+                            nowYr = new Date().getFullYear();
+                        //debugger;
+                        $scope.Load_Chart(nowYr);
+                        //})
+
+                    }
+                });
+        </script>
+    </div>
+</body>
+
+
+<!-- Mirrored from industrialwaterod.nic.in/Home/Dashboard by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Dec 2020 05:22:46 GMT -->
+</html>
