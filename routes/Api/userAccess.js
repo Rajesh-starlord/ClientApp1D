@@ -1,12 +1,10 @@
 var express = require('express');
 const router = new express.Router();
-const dbService = require('../../src/services/dbService');
 const AuthService = require('../../src/Api/services/AuthService');
 const UserService = require('../../src/Api/services/UserService');
 const UserController = require('../../src/Api/Controllers/UserController');
 const {userModel} = require('../../src/Models/Models');
 const MailService  = require('../../src/Utils/mailService');
-const { response } = require('express');
 require('dotenv').config();
 
 /*validate LOGIN page*/
@@ -39,52 +37,28 @@ router.post('/register', async function(req, res, next) {
   try {
     let res = await UserService.isUserExists(userId);
     if(!res.status){
-      let mobileChk = await UserService.chkDuplicateMobileNo(mobile);
-      if(!mobileChk.status){
-        if(email.includes('@')){
-          let emailChk = await UserService.chkDuplicateEmail(email);
-          if(!emailChk.status){
-      
-            var mailOptions = {
-              from: process.env.HostMail,
-              to: email.trim(),
-              subject: 'DesiiApp Login Otp',
-              text: 'Your Login OTP for DesiiApp is '+otp
-            };
-            let mailresp = await MailService.sendMail(mailOptions);
-            //console.log(mailresp);
-            if(mailresp.status == 1){
-              response.message = 'success';
-            }else{
-              response.message = 'Errorr In Sending Otp...Please try after sometime or check your email adress.';
-            }
-            /*let options = {
-                method: 'POST',
-                url: 'https://nexmo-nexmo-sms-verify-v1.p.rapidapi.com/send-verification-code',
-                params: {phoneNumber: newUser.mobile, brand: 'default_application_5127621'},
-                headers: {
-                  'x-rapidapi-key': 'f6c4732c94mshba507199b03d5e6p1bb133jsna515d7d4267b',
-                  'x-rapidapi-host': 'nexmo-nexmo-sms-verify-v1.p.rapidapi.com'
-                }
-              };
-              otp  = await axios.request(options).then(response=>response.body).catch(function (error) {
-              response.message = 'failed to send otp';
-              console.error(error);
-            });*/
-          }else {
-            response.message = 'Email Already Exists';
+      let emailChk = await UserService.chkDuplicateEmail(email);
+      if(!emailChk.status){
+        let mobileChk = await UserService.chkDuplicateMobileNo(mobile);
+        if(!mobileChk.status){
+    
+          let smsresp = await MailService.sendsmsOTP(otp,mobile);
+          if(smsresp.LogID && smsresp.Message === 'Submitted Successfully'){
+            response.message = 'success';
+          }else{
+            response.message = 'Errorr In Sending Otp...Please try after sometime or check your mobile number.';
           }
-        }else{
-          response.message = 'Invalid Email';
+        }else {
+          response.message = 'Mobile no Already Exists';
         }
       }else{
-        response.message = 'Mobile no Already Exists';
+        response.message = 'Email Already Exists';
       }
     }else {
       response.message = 'UserID Already Exists';
     }
   } catch (e) {
-    response.message = e.status === 0 ?'Errorr In Sending Otp...Please try after sometime or check your email adress.':'error';
+    response.message = e.status === 0 ?'Errorr In Sending Otp...Please try after sometime or check your mobile number.':'error';
     console.log(e);
   }
   if(response.message == 'success'){
@@ -167,38 +141,30 @@ router.get('/getCity', async function(req, res, next) {
 router.post('/forgotpassword',async function(req, res, next) {
   var response = {message:"",status:'',body:[]};
   const otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
-  const email = req.body.email;
+  const mobile = req.body.mobile;
   try {
-    if(email){
-      let emailChk = await UserService.chkDuplicateEmail(email);
-      let emailExists = emailChk && emailChk.status?emailChk.status:false;
-      if(emailExists){
-        var mailOptions = {
-          from: process.env.HostMail,
-          to: email.trim(),
-          subject: 'DesiiApp Reset Password Otp',
-          text: 'Your OTP for Password Reset in DesiiApp is '+otp
-        };
-        let mailresp = await MailService.sendMail(mailOptions);
-        if(mailresp.status == 1){
+    if(mobile){
+      let mobileChk = await UserService.chkDuplicateMobileNo(mobile);
+      if(mobileChk.status){
+        let smsresp = await MailService.sendsmsOTP(otp,mobile);
+        if(smsresp.LogID && smsresp.Message === 'Submitted Successfully'){
           response.message = 'success';
         }else{
-          response.message = 'Errorr In Sending Otp...Please try after sometime or check your email adress.';
+          response.message = 'Errorr In Sending Otp...Please try after sometime or check your mobile number.';
         }
-      }else{
-        response.message = 'Email is not registered';
+      }else {
+        response.message = 'Mobile no doesn\'t Exists';
       }
-    }else{
-      response.message = 'Invalid Credentials'
+    }else {
+      response.message = 'Invalid data provided';
     }
   } catch (e) {
-    response.message = 'internal server error';
-    response.message = e.status === 0 ?'Errorr In Sending Otp...Please try after sometime or check your email adress.':'error';
+    response.message = e.status === 0 ?'Errorr In Sending Otp...Please try after sometime or check your mobile number.':'error';
     console.log(e);
   }
-  if(response.message === 'success'){
+  if(response.message == 'success'){
     response.status = 'success';
-    response.body = {otp:otp}; 
+    response.body = [{otp:otp}];
   }else{
     response.status = 'failed';
   }

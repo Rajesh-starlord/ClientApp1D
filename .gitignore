@@ -25,4 +25,5 @@ yarn-error.log*
 
 /uploads/posts/*
 db.txt
-
+.env
+pg_hba.cnf
