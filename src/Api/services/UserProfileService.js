@@ -94,7 +94,7 @@ const UserProfileService = {
     var resp = {status:'',message:'',body:[]};
     if(userId && UserService.isUserExists(userId)){
       let query = {
-        text:"select * from userdetail where status = 'Active' where userid != $1 order by totalfollowers desc",
+        text:"select * from userdetail where status = 'Active' and userid != $1 order by totalfollowers desc",
         values:[userId]
       }
       let result = [];

@@ -15,21 +15,21 @@ const UserService = {
 				let data = await dbService.execute(query);
 				if(typeof data != 'string' ){
 					if(data.length > 0){
-						status = true;
-						response.body = data;
+						if(data[0].status != 'Active'){
+							response.message = 'User Is InActive';
+							response.status = false;
+						}else{
+							status = true;
+							response.body = data;
+							response.message = 'success';
+							response.status = status;
+						}
 					}
 				}else{
 					message  = data;
 				}
 			}catch(e){
 				console.log(e);
-			}
-			if(response.body[0].status != 'Active'){
-				response.message = 'User Is InActive';
-				response.status = false;
-			}else{
-				response.message = message;
-				response.status = status;
 			}
 			return response;
 		},
