@@ -234,7 +234,7 @@ const UserProfileService = {
           if (totalfollowers > 0) {
             followersList = user.followers.split(',');
             if(!followersList.includes(follwedBy)){
-                newfollwersList = user.followers+','+toFollow;
+                newfollwersList = user.followers+','+follwedBy;
                 totalfollowers+=1;
             }
           } else {
