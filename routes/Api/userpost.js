@@ -80,7 +80,6 @@ router.post('/userpost',uploadPost,async function(req, res, next) {
               console.log(err);
               res.send(response);
             }else {
-              console.log(data);
               filePath = data.Location;
               fileName = data.key;
               var userPostData = {

@@ -74,6 +74,7 @@ router.post('/register', async function(req, res, next) {
 router.post('/signup', async function(req, res, next) {
   var response = {status:'',message:'',body:[]};
   var userData = req.body;
+  console.log(userData);
   var newUser = new userModel(
     userData.userId,
     userData.userName,
