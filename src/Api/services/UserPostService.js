@@ -7,6 +7,7 @@ const UserPostService = {
     console.log('API::UserPostService--->savePost called');
     let resp = {status:'',message:'',body:[]};
     let postid = 'POST-'+uuidv4();
+    console.log(userPostData);
     const query = {
       text:" select * from  createUserPost($1,$2,$3,$4,$5,$6,$7,$8)",
       values:[postid,userPostData.postTitle,userPostData.postDesc,userPostData.fileName,userPostData.filePath,
@@ -115,8 +116,8 @@ const UserPostService = {
     try{
       let resp = await dbService.execute(query);
       if(typeof resp !== 'string'){
-        let followers = (resp[0].followers && resp[0].followers.length>0)?resp[0].followers.split(','):'';
-        let following = (resp[0].following && resp[0].following.length>0)?resp[0].following.split(','):'';
+        let followers = (resp.length > 0 && resp[0].followers && resp[0].followers.length>0)?resp[0].followers.split(','):'';
+        let following = (resp.length > 0 && resp[0].following && resp[0].following.length>0)?resp[0].following.split(','):'';
         newresult = result.filter(r=> followers.includes(r.postedby) || following.includes(r.postedby) || r.postedby === 'Admin01' || r.postedby === userid);
       }
     }catch(e){
