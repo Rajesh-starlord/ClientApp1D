@@ -88,7 +88,7 @@ router.post('/userpost',uploadPost,async function(req, res, next) {
                 fileName:fileName,
                 filePath:filePath,
                 postedBy:req.body.postedBy,
-                activity:req.body.activity?parseInt(req.body.activity):1,
+                activity:req.body.activity!=='' && req.body.activity !== 'undefined'?parseInt(req.body.activity):1,
                 postType:1
               }
               let resp = await UserPostController.savePost(userPostData);
