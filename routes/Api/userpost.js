@@ -323,7 +323,7 @@ router.post('/deletePost',async function (req,res) {
   var response = {message:'',status:'',body:[]};
   if(postid && userid){
     try {
-      response = await UserPostService.deletePost(postId,userId);
+      response = await UserPostService.deletePost(postid,userid);
     } catch (e) {
       response.message = 'internal server error...';
       response.status = 'failed';
