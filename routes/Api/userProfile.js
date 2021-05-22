@@ -243,24 +243,24 @@ router.post('/updateProfile',async function(req, res, next) {
        && userData.dob ){
       try {
         response = await UserProfileController.updateProfileDetails(req.body);
-        if(response.message == 'success'){
-          response.status = 'success';
-        }else {
-          response.status = 'failed';
-        }
-        res.status(200).send(response);
       } catch (e) {
         console.log(e);
         response.status = 'failed';
         response.message = 'error';
-        res.status(500).send(response);
+        //res.status(500).send(response);
       }
     }
   }else {
     response.status = 'failed';
     response.message = message;
-    res.status(200).send(response);
+    //res.status(200).send(response);
   }
+  if(response.message == 'success'){
+    response.status = 'success';
+  }else {
+    response.status = 'failed';
+  }
+  res.status(200).send(response);
   console.log('ROUTE::--->updateProfile end');
 });
 
