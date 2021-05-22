@@ -74,7 +74,11 @@ const UserProfileService = {
           userProfile = result[0];
         }
         var posts = await UserPostService.getPostsOfUser(userId);
-        userProfile.posts = posts.length > 0 ? posts.filter(p => p.posttype === 1) : [];
+        if(req.session.user && req.session.user.role === 'ADMIN'){
+          userProfile.posts = posts;
+        }else{
+          userProfile.posts = posts.length > 0 ? posts.filter(p => p.posttype === 1) : [];
+        }
         resp.message = 'success';
         resp.status = 'success';
         resp.body = userProfile;
