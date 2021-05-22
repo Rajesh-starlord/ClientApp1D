@@ -239,6 +239,7 @@ router.post('/updateProfile',async function(req, res, next) {
     message = 'dob required';
   }*/
   if(message == ''){
+    console.log('inside');
     if(userData.userId && userData.userName && userData.email && userData.mobile
        && userData.dob ){
       try {
@@ -260,8 +261,8 @@ router.post('/updateProfile',async function(req, res, next) {
   }else {
     response.status = 'failed';
   }
-  res.status(200).send(response);
   console.log('ROUTE::--->updateProfile end');
+  res.send(response);
 });
 
 router.get('/getfollowers',async function (req,res) {
