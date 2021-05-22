@@ -74,6 +74,7 @@ const UserProfileService = {
           userProfile = result[0];
         }
         var posts = await UserPostService.getPostsOfUser(userId);
+        console.log(posts);
         userProfile.posts = posts;
         resp.message = 'success';
         resp.status = 'success';
