@@ -141,6 +141,7 @@
 }
 .admin-panel-pager {
   max-height: max-content !important;
+  overflow: auto;
 }
 </style>
 </head>
@@ -152,7 +153,7 @@
 <%-include('layout/leftmenu')-%>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="admin-panel-pager" style="overflow-y: auto;">
+  <div class="admin-panel-pager">
     <!-- Main content -->
     <section class="content">
         <section class="content-header row">
@@ -201,7 +202,7 @@
                 <!--<a data-toggle="collapse" data-target="#demo"
                     class="showhideangelbg"><i class="fa fa-angle-double-down"></i>
                 </a>-->
-              <div class="container">
+              <div class="">
                 <table id="listAllCostCenter" style="width:100%;" class="table table-bordered">
                   <thead>
                   <tr>
