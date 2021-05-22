@@ -5,28 +5,37 @@ const UserService = {
 		AuthenticateUser:async (id,password) => {
 			console.log('UserService--->AuthenticateUser called')
 			let status = false;
-			var message = '';
 			var response = {status:'',message:'',body:[]};
 			try{
-				let query = {
-					text:'select ud.* ,cast((select count(*) from userposts where postedBy = ud.userid) as integer) as totalposts, s.state as statename,c.city_name as cityname from userdetail as ud left join state_list as s on s.id = ud.state::integer left join city as c on c.city_id = ud.city::integer where email = $1 and password = $2',
-					values:[id,password]
+				let sql = '';
+				if(id && id.includes('@')){
+					sql = 'select ud.* ,cast((select count(*) from userposts where postedBy = ud.userid) as integer) as totalposts, s.state as statename,c.city_name as cityname from userdetail as ud left join state_list as s on s.id = ud.state::integer left join city as c on c.city_id = ud.city::integer where email = $1 and password = $2';
+				}else if(id && id.trim().length === 10){
+					sql = 'select ud.* ,cast((select count(*) from userposts where postedBy = ud.userid) as integer) as totalposts, s.state as statename,c.city_name as cityname from userdetail as ud left join state_list as s on s.id = ud.state::integer left join city as c on c.city_id = ud.city::integer where mobileno = $1 and password = $2';
 				}
-				let data = await dbService.execute(query);
-				if(typeof data != 'string' ){
-					if(data.length > 0){
-						if(data[0].status != 'Active'){
-							response.message = 'User Is InActive';
-							response.status = false;
-						}else{
-							status = true;
-							response.body = data;
-							response.message = 'success';
-							response.status = status;
+				if(sql){
+					let query = {
+						text:sql,
+						values:[id,password]
+					}
+					let data = await dbService.execute(query);
+					if(typeof data != 'string' ){
+						if(data.length > 0){
+							if(data[0].status != 'Active'){
+								response.message = 'User Is InActive';
+								response.status = false;
+							}else{
+								status = true;
+								response.body = data;
+								response.message = 'success';
+								response.status = status;
+							}
 						}
+					}else{
+						response.message  = data;
 					}
 				}else{
-					message  = data;
+					response.message = 'Enter a valid email or mobile number';
 				}
 			}catch(e){
 				console.log(e);

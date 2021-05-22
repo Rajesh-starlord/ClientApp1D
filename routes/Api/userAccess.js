@@ -12,11 +12,15 @@ router.post('/login', async function(req, res, next) {
   var userId = req.body.UserID;
   var password = req.body.Password;
   var response = {status:'',message:'',body:[]};
-  try {
-    response = await UserController.AuthenticateUser(userId,password);
-  } catch (e) {
-    response.message = 'login error';
-    console.log(e);
+  if(userId && password){
+    try {
+      response = await UserController.AuthenticateUser(userId,password);
+    } catch (e) {
+      response.message = 'login error';
+      console.log(e);
+    }
+  }else{
+    response.message = 'Invalid Key or Insufficient Data provided';
   }
   if(response.message == 'login success'){
     response.status = 'success';
