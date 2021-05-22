@@ -25,17 +25,7 @@ const UserProfileController = {
           userchk = await UserService.isUserExists(userProfileData.newUserId);
       }
       if(!userchk.status){
-        /*let mobileChk = await UserService.chkDuplicateMobileNo(userProfileData.mobile);
-        if(!mobileChk.status || mobileChk.body.userid == userProfileData.userId){
-          let emailChk = await UserService.chkDuplicateEmail(userProfileData.email);
-          if(!emailChk.status || emailChk.body.userid == userProfileData.userId){*/
-            response = await UserProfileService.updateProfileDetails(userProfileData);
-          /*}else {
-            response.message = 'Email Already Exists';
-          }
-        }else{
-          response.message = 'Mobile no Already Exists';
-        }*/
+          response = await UserProfileService.updateProfileDetails(userProfileData);
       }else {
         response.message = 'UserID Already Exists';
       }

@@ -35,7 +35,6 @@ const UserProfileService = {
     let resp = { status: '', message: '', body: [] };
     let query = {
       text: "update userdetail set userid = $1,userName = $2 where userid = $3",
-      //, email = $3, mobileno = $4, dob = $5 where userid = $6",
       values: [userProfileData.newUserId, userProfileData.userName, userProfileData.userId]
     }
     try {

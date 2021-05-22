@@ -231,32 +231,22 @@ router.post('/updateProfile',async function(req, res, next) {
   }else if(!userData.userName){
     message = 'userName required';
   }
-  /*else if(!userData.email){
-    message = 'email required';
-  }else if(!userData.mobile){
-    message = 'mobile required';
-  }else if(!userData.dob){
-    message = 'dob required';
-  }*/
   if(message == ''){
-    console.log('inside');
-    if(userData.userId && userData.userName && userData.email && userData.mobile
-       && userData.dob ){
+    if(userData.userId && userData.userName  && userData.newUserId){
       try {
         response = await UserProfileController.updateProfileDetails(req.body);
       } catch (e) {
         console.log(e);
-        response.status = 'failed';
         response.message = 'error';
-        //res.status(500).send(response);
       }
+    }else{
+      response.message = 'Invalid data';
     }
   }else {
-    response.status = 'failed';
     response.message = message;
-    //res.status(200).send(response);
   }
   if(response.message == 'success'){
+    response.status = 'success';
     response.status = 'success';
   }else {
     response.status = 'failed';
