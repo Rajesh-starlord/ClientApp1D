@@ -139,6 +139,9 @@
   background-color: lavender;
   padding: 3px;
 }
+.admin-panel-pager {
+  max-height: max-content !important;
+}
 </style>
 </head>
 
@@ -149,7 +152,7 @@
 <%-include('layout/leftmenu')-%>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="admin-panel-pager">
+  <div class="admin-panel-pager" style="overflow-y: auto;">
     <!-- Main content -->
     <section class="content">
         <section class="content-header row">
@@ -198,36 +201,38 @@
                 <!--<a data-toggle="collapse" data-target="#demo"
                     class="showhideangelbg"><i class="fa fa-angle-double-down"></i>
                 </a>-->
-              <table id="listAllCostCenter" style="width:100%;" class="table table-bordered">
-                <thead>
-                <tr>
-                  <th>User Post</th>
-                  <th>PostID</th>
-                  <th>Post Desc</th>
-                  <th>Likes</th>
-                  <th>DisLikes</th>
-                  <th>Comments</th>
-                  <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <%if(user.posts.length>0){%>
-                    <%user.posts.forEach(post=>{%>
-                      <tr>
-                        <td><img src="<%=post.filepath%>"/></td>
-                        <td><%=post.postid%></td>
-                        <td><%=post.posttitle%></td>
-                        <td><a href="javascript:void(0);" onclick="getLikes('<%=post.postid%>')"><%=post.likes%></a></td>
-                        <td><a href="javascript:void(0);" onclick="getDisLikes('<%=post.postid%>')"><%=post.dislikes%></a></td>
-                        <td><a href="javascript:void(0);" onclick="getComments('<%=post.postid%>')"><%=post.comments%></a></td>
-                        <td><a href="javascript:void(0);" onclick="deletePost('<%=post.postid%>')">delete</a></td>
-                    </tr>
-                    <%})%>
-                  <%}else{%>
-                    <td colspan="7">No Posts Yet</td>
-                  <%}%>
-                </tbody>
-              </table>
+              <div class="container">
+                <table id="listAllCostCenter" style="width:100%;" class="table table-bordered">
+                  <thead>
+                  <tr>
+                    <th>User Post</th>
+                    <th>PostID</th>
+                    <th>Post Desc</th>
+                    <th>Likes</th>
+                    <th>DisLikes</th>
+                    <th>Comments</th>
+                    <th>Action</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <%if(user.posts.length>0){%>
+                      <%user.posts.forEach(post=>{%>
+                        <tr>
+                          <td><img src="<%=post.filepath%>"/></td>
+                          <td><%=post.postid%></td>
+                          <td><%=post.posttitle%></td>
+                          <td><a href="javascript:void(0);" onclick="getLikes('<%=post.postid%>')"><%=post.likes%></a></td>
+                          <td><a href="javascript:void(0);" onclick="getDisLikes('<%=post.postid%>')"><%=post.dislikes%></a></td>
+                          <td><a href="javascript:void(0);" onclick="getComments('<%=post.postid%>')"><%=post.comments%></a></td>
+                          <td><a href="javascript:void(0);" onclick="deletePost('<%=post.postid%>')">delete</a></td>
+                      </tr>
+                      <%})%>
+                    <%}else{%>
+                      <td colspan="7">No Posts Yet</td>
+                    <%}%>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <!-- /.box-body -->
           </div>
