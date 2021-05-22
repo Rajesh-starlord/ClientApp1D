@@ -104,7 +104,7 @@ const UserProfileService = {
           resp.status = 'failed';
         } else {
           result.forEach((item, i) => {
-            let followers = item.totalfollowers > 0 ? item.followers.split(',') : '';
+            let followers = item.followers && item.followers.length > 0 ? item.followers.split(',') : '';
             if (followers.includes(userId)) {
               item.isFollowing = true;
             } else {
