@@ -206,6 +206,8 @@ router.get('/getUserProfile',async function(req, res, next) {
   if(req.query.userId){
     try {
       response = await UserProfileService.getUserProfile(req.query.userId);
+      let posts = response.body && response.body.posts?response.body.posts:[];
+      response.body.posts = posts.length > 0 ? posts.filter(p => p.posttype === 1) : [];
       res.status(200).send(response);
     } catch (e) {
       console.log(e);
