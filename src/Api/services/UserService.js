@@ -1,4 +1,6 @@
+const { user } = require('../../Utils/dbConfig');
 const dbService  = require('../services/dbService');
+const { DateFormatter } = require('../Utils/CommonUtils');
 
 const UserService = {
 		/**** AUTHENTICATE USER ********/
@@ -158,6 +160,7 @@ const UserService = {
 		//signup user api
 		createUser:async (userData) => {
 			console.log('UserService--->createUser called')
+			userData.dob = userData.dob?DateFormatter.getFormattedDate(userData.dob):'';
 			let query = {
 				text:"call createuser($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
 				values:[userData.userId,userData.userName,userData.password,userData.email.replace(/\s+/g, ' ').trim(),

@@ -8,6 +8,17 @@ const DateFormatter = {
       var year = date.getFullYear();
       date = day+'/'+month+'/'+year;
       return date;
+    },
+
+    getFormattedDate:(date) => {
+      if(date){
+        var dateArray = date.split('/');
+        var day = dateArray?dateArray[0]:'';
+        var month = dateArray?dateArray[1]:'';
+        var year = dateArray?dateArray[2]:'';
+        date = year+'-'+month+'-'+day;
+      }
+      return date;
     }
 }
 
