@@ -132,7 +132,7 @@ const UserPostService = {
     console.log('API::UserPostService--->getPostsOfUser called');
     var result = [];
     const query = {
-      text:" select * from userposts where postedBy = $1 and deletedflag = 0",
+      text:"select p.postid,p.posttitle,p.postdesc,p.filename,p.filepath,p.postedby,p.likes,p.dislikes,p.likedby,p.dislikedby,p.postedon,p.status,p.posttype,(select a.activity from activity as a where a.serialno = p.activity) as activity,p.comments  from  userposts as p where postedBy = $1 and deletedflag = 0",
       values:[userid]
     }
     try{
@@ -140,6 +140,11 @@ const UserPostService = {
     }catch(e){
       result = 'exception occured';
       console.log(e);
+    }
+    if(result && result !== 'string' && result.length > 0){
+      result.forEach(r=>{
+        r.activity = r.activity && r.activity === 'Default'?'':r.activity;
+      });
     }
     return result;
   },

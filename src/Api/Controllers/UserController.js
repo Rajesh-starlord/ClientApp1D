@@ -29,16 +29,11 @@ const UserController = {
 		console.log('UserController----->createUser called')
 		let response = {status:'',message:'',body:[]};
 		let message = '';
-		let isvalidDate = user.dob?user.dob.split('/').length>3:false;
-		if(isvalidDate){
-			try {
-				message = await UserService.createUser(user);
-			} catch (e) {
-				message = "Failed To Create";
-				console.log(e);
-			}
-		}else{
-			message = "Invalid Date";
+		try {
+			message = await UserService.createUser(user);
+		} catch (e) {
+			message = "Failed To Create";
+			console.log(e);
 		}
 		response.message = message;
 		return response;
