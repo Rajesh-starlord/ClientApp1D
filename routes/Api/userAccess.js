@@ -93,7 +93,7 @@ router.post('/signup', async function(req, res, next) {
   var dateChacked = true;
   if(userData.dob){
     if(userData.dob.split('/').length === 3){
-      if(newUser.age < 18){
+      if(newUser.age < 15){
         dateChacked = false;
         response.message = 'Age Under 18 Is Not Alowed To Use This App.';
       }
