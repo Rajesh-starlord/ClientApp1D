@@ -140,11 +140,11 @@ const UserService = {
 			return status;
 		},
 
-		resetPassword:async function(email,newPassword){
+		resetPassword:async function(mobile,newPassword){
 			console.log('UserService--->resetPassword called')
 			let query = {
-				text:"update userdetail set password=$1 where email = $2",
-				values:[newPassword,email]
+				text:"update userdetail set password=$1 where mobileno = $2",
+				values:[newPassword,mobile]
 			}
 			let status = '';
 			try{

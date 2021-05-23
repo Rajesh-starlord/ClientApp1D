@@ -90,12 +90,12 @@ const UserController = {
 		var response = {message:"",status:'',body:[]};
 		var message = '';
 		try {
-			let check = await UserService.chkDuplicateEmail(data.email);
+			let check = await UserService.chkDuplicateMobileNo(data.mobile);
 			if(check.status){
-				let result = await UserService.resetPassword(data.email,data.Password);
+				let result = await UserService.resetPassword(data.mobile,data.Password);
 				message = result;
 			}else{
-				message = 'User Doesn\'t Exists';
+				message = 'Mobile number Doesn\'t Exists';
 			}
 		} catch (e) {
 			response.message = response.status = 'failed';

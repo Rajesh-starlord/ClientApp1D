@@ -176,20 +176,44 @@ router.post('/forgotpassword',async function(req, res, next) {
   res.send(response);
 });
 
-/********************** ADmin Changepwd *****************************************/
+/********************** user Changepwd *****************************************/
 router.post('/changepassword',async function(req, res, next) {
   var response = {message:"",status:'',body:[]};
-  if(req.body.Password == req.body.ConfPWD && (req.body.userId || req.body.email)){
-    try {
-      if(req.body.userId){
+  if(req.body.Password == req.body.ConfPWD){
+    if(req.body.userId){
+      try {
         response = await UserController.changePassword(req.body);
-      }else if(req.body.email){
-        response = await UserController.resetPassword(req.body);
+      } catch (e) {
+        response.message = 'internal server error...';
+        response.status = "failed";
+        console.log(e);
       }
-    } catch (e) {
-      response.message = 'internal server error...';
+    }else{
+      response.message = 'insufficient data...';
       response.status = "failed";
-      console.log(e);
+    }
+  }else{
+    response.message = 'confirm password mismatch';
+    response.status = "failed";
+  }
+  res.send(response);
+});
+
+/********************** User reset pwd *****************************************/
+router.post('/resetpassword',async function(req, res, next) {
+  var response = {message:"",status:'',body:[]};
+  if(req.body.Password == req.body.ConfPWD){
+    if(req.body.mobile){
+      try {
+        response = await UserController.resetPassword(req.body);
+      } catch (e) {
+        response.message = 'internal server error...';
+        response.status = "failed";
+        console.log(e);
+      }
+    }else{
+      response.message = 'insufficient data...';
+      response.status = "failed";
     }
   }else{
     response.message = 'confirm password mismatch';
