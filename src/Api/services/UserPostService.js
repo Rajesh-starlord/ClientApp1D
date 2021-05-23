@@ -141,11 +141,11 @@ const UserPostService = {
       result = 'exception occured';
       console.log(e);
     }
-    if(result && result !== 'string' && result.length > 0){
+    /*if(result && result !== 'string' && result.length > 0){
       result.forEach(r=>{
         r.activity = r.activity && r.activity === 'Default'?'':r.activity;
       });
-    }
+    }*/
     return result;
   },
 
