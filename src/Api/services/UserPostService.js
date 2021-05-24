@@ -143,7 +143,7 @@ const UserPostService = {
     }
     if(result && result !== 'string' && result.length > 0){
       result.forEach(r=>{
-        r.activity = r.activity && r.activity === 'Default'?'':r.activity;
+        r.activity = r.activity && r.activity === 'Default'?null:r.activity;
       });
     }
     return result;
