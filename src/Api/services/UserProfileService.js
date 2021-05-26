@@ -287,9 +287,17 @@ const UserProfileService = {
               });
               newfollwingList = newfollwingList ? newfollwingList.slice(0, newfollwingList.length - 1) : null;
               totalfollowing -= 1;
-              const query1 = {
-                text: "update userdetail set totalfollowing = $1,following = $2 where userid = $3",
-                values: [totalfollowing, newfollwingList, userId]
+              var query1 = {};
+              if(!newfollwingList || newfollwingList == null || newfollwingList ===''){
+                query1 = {
+                  text: "update userdetail set totalfollowing = $1,following = null where userid = $2",
+                  values: [totalfollowing, userId]
+                }
+              }else{
+                query1 = {
+                  text: "update userdetail set totalfollowing = $1,following = $2 where userid = $3",
+                  values: [totalfollowing, newfollwingList, userId]
+                }
               }
               resp.message = await dbService.executeUpdate(query1);
             } else {
@@ -339,9 +347,16 @@ const UserProfileService = {
               });
               newfollwersList = newfollwersList ? newfollwersList.slice(0, newfollwersList.length - 1) : null;
               totalfollowers -= 1;
-              const query1 = {
-                text: "update userdetail set totalfollowers = $1,followers = $2 where userid = $3",
-                values: [totalfollowers, newfollwersList, userId]
+              if(!newfollwersList || newfollwersList == null || newfollwersList ===''){
+                query1 = {
+                  text: "update userdetail set totalfollowers = $1,followers = null where userid = $2",
+                  values: [totalfollowers, userId]
+                }
+              }else{
+                query1 = {
+                  text: "update userdetail set totalfollowers = $1,followers = $2 where userid = $3",
+                  values: [totalfollowers, newfollwersList, userId]
+                }
               }
               resp.message = await dbService.executeUpdate(query1);
             } else {
