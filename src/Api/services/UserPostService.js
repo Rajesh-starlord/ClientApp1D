@@ -118,7 +118,7 @@ const UserPostService = {
         // let followers = (resp.length > 0 && resp[0].followers && resp[0].followers.length > 0) ? resp[0].followers.split(',') : '';
         let following = (resp.length > 0 && resp[0].following && resp[0].following.length > 0) ? resp[0].following.split(',') : '';
         // r => followers.includes(r.postedby) || 
-        newresult = result.filter(following.includes(r.postedby) || r.postedby === 'Admin01' || r.postedby === userid);
+        newresult = result.filter( r => following.includes(r.postedby) || r.postedby === 'Admin01' || r.postedby === userid);
       }
     }catch(e){
       newresult  = 'exception occured';
