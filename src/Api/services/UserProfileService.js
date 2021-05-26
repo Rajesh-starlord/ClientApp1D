@@ -181,7 +181,7 @@ const UserProfileService = {
           var totalfollowing = parseInt(user.totalfollowing);
           var followingList = [];
           if (totalfollowing > 0) {
-            followingList = user.following.split(',');
+            followingList = user.following && user.following.length > 0 ?user.following.split(','):[];
             if (!followingList.includes(toFollow)) {
               newfollwingList = user.following + ',' + toFollow;
               totalfollowing += 1;
@@ -231,7 +231,7 @@ const UserProfileService = {
           var totalfollowers = parseInt(user.totalfollowers);
           var followersList = [];
           if (totalfollowers > 0) {
-            followersList = user.followers && user.followersllength > 0 ?user.followers.split(','):[];
+            followersList = user.followers && user.followers.length > 0 ?user.followers.split(','):[];
             if (!followersList.includes(follwedBy)) {
               newfollwersList = user.followers + ',' + follwedBy;
               totalfollowers += 1;
