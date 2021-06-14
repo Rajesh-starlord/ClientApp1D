@@ -57,19 +57,49 @@ const UserPostService = {
   },
 
   //fetch all posts
-  getAllPosts:async (userid) =>{
+  getAllPosts:async (userid,start) =>{
     console.log('API::UserPostService--->getAllPosts called');
     let resp = {status:'',message:'',body:[]};
-    const query = {
-      text:" select * from fetchAllPosts($1)",
+    const sql = {
+      text:"select following from userdetail where userid = $1",
       values:[userid]
     }
+    const followingResp = await dbService.execute(sql);
+    // var filter = userid;
+    if(parseInt(start) === 1){
+      start = 0;
+    }else{
+      start = ((parseInt(start) * 10) - 10) + 1;
+    }
     try{
+      querytext = 'select u.username,u.userid,u.profileimg,' +
+        'post.postid,post.posttitle,post.postdesc,post.filename,' +
+        'post.filepath,post.likes,post.dislikes,post.likedby,post.dislikedby,post.comments,' +
+        'post.postedby,post.postedon,post.posttype,' +
+        '(select act.activity from activity as act where act.serialno = post.activity)' +
+        'from userposts as post join userdetail as u on u.userid = post.postedby ' +
+        'where post.deletedflag = 0 and post.postedby in (';
+      if (followingResp !== 'string') {
+        if (followingResp && followingResp[0] && followingResp[0].following && followingResp[0].following.length) {
+          let followings = followingResp[0].following.split(',');
+          followings.forEach((str, i) => {
+            querytext += '\'' + str + '\',';
+          });
+        }
+      }
+      querytext += '\'' + userid + '\',';
+      querytext = querytext.substring(0, querytext.length - 1) + ') order by post.postedon desc offset ' + start + ' limit ' + (start + 10);
+      // console.log(querytext);
+      const query = {
+        text: querytext,
+        values: []
+      }
       var result = await dbService.execute(query);
-      if(typeof result == 'string'){
+      if (typeof result == 'string') {
         resp.message = resp;
       }else{
-        const posts = await UserPostService.filterPostsByFollow(result,userid);
+        const posts = result;
+        //await UserPostService.filterPostsByFollow(result,userid);
         if(posts && typeof posts !== 'string'){
           posts.forEach((item, i) => {
             if(item.likedby){

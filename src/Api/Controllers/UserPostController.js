@@ -16,11 +16,11 @@ const UserPostController = {
     return response;
   },
   //get all posts
-  getAllPosts:async (userid) =>{
+  getAllPosts:async (userid,start) =>{
     console.log('API::UserPostController--->getAllPosts called');
     var response = {status:'',message:'',body:[]};
     try{
-      response = await UserPostService.getAllPosts(userid);
+      response = await UserPostService.getAllPosts(userid,start);
     } catch (e) {
       response.message = 'exception occured';
       console.log(e);

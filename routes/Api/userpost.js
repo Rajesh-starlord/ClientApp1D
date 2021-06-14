@@ -158,7 +158,8 @@ router.get('/getAllPosts',async function(req, res, next) {
   var response = {status:'success',message:'',body:[]};
   try {
     var userid = req.query.userid;
-    response = await UserPostController.getAllPosts(userid);
+    var start = req.query.page ? req.query.page : 1;
+    response = await UserPostController.getAllPosts(userid,start);
   } catch (e) {
     response.message = 'exception occured';
     console.log(e);
