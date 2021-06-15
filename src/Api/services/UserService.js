@@ -247,6 +247,21 @@ const UserService = {
 				console.log(e);
 			}
 			return result;
+		},
+
+		saveFirebaseToken:async (userid,token) => {
+			console.log('UserService--->saveFirebaseToken called')
+			let query = {
+				text:"update userdetail set firebasetoken = $2  where userid = $1",
+				values:[userid,token]
+			}
+			let result = [];
+			try{
+				result = await dbService.executeUpdate(query);
+			}catch(e){
+				console.log(e);
+			}
+			return result;
 		}
 }
 

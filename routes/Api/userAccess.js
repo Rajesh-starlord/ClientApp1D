@@ -235,6 +235,31 @@ router.post('/resetpassword',async function(req, res, next) {
   res.send(response);
 });
 
+/********************** User set firebasetocken *****************************************/
+router.post('/mapusertoken',async function(req, res, next) {
+  var response = {message:"",status:'',body:[]};
+  if(req.body.userId && req.body.token){
+    try {
+      let status = await UserService.saveFirebaseToken(req.body.userId,req.body.token);
+      if(status === 'success'){
+        response.message = 'success';
+        response.status = "success";
+      }else{
+        response.message = status;
+        response.status = "failed";
+      }
+    } catch (e) {
+      response.message = 'internal server error...';
+      response.status = "failed";
+      console.log(e);
+    }
+  }else{
+    response.message = 'Insufficient data';
+    response.status = "failed";
+  }
+  res.send(response);
+});
+
 /************ logout ***************/
 router.get('/logout',async function(req, res, next) {
   //req.session.destroy();
