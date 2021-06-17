@@ -167,7 +167,7 @@ router.get('/getAllPosts',async function(req, res, next) {
     if(response.message == ''){
       response.message = 'success';
       response.status = 'success';
-      response.CurrentPage = start;
+      response.CurrentPage = parseInt(start);
     }else{
       response.status = 'failed';
     }
