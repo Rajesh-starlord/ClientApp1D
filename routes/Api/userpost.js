@@ -156,9 +156,9 @@ router.get('/activities',async function(req, res, next) {
 router.get('/getAllPosts',async function(req, res, next) {
   console.log('ROUTE::--->getAllPosts called');
   var response = {status:'success',message:'',body:[]};
+  var userid = req.query.userid;
+  var start = req.query.page ? req.query.page : 1;
   try {
-    var userid = req.query.userid;
-    var start = req.query.page ? req.query.page : 1;
     response = await UserPostController.getAllPosts(userid,start);
   } catch (e) {
     response.message = 'exception occured';
@@ -167,6 +167,7 @@ router.get('/getAllPosts',async function(req, res, next) {
     if(response.message == ''){
       response.message = 'success';
       response.status = 'success';
+      response.body = { CurrentPage: start };
     }else{
       response.status = 'failed';
     }

@@ -273,7 +273,6 @@ const UserService = {
 		}
 		try {
 			let result = await dbService.execute(query);
-      console.log(result);
       if(result !=='string'){
         if(result && result[0] && result[0].message === 'success'){
           response.message = response.status = 'success';
