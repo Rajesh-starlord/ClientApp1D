@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<%-include('layout/headscript')-%>
+
+<script src="/frontend/Scripts/highcharts.js"></script>
+<script src="/frontend/Scripts/exporting.js"></script>
+<style type="text/css">
+#function li{
+  margin-left: 35px;
+}
+.pagination{
+  display:flex;
+  float:right;
+}
+.pagination li{
+  margin:2px;
+}
+.row{
+  --margin-left:0px !important;
+}
+.admin-panel-pager {
+  max-height: max-content !important;
+  overflow: auto;
+}
+</style>
+</head>
+
+<body>
+
+<%-include('layout/header')-%>
+<div class="row">
+<%-include('layout/leftmenu')-%>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="admin-panel-pager">
+    <!-- Main content -->
+    <section class="content">
+        <section class="content-header">
+          <h1>Verify User</h1>
+        </section>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="">
+            <!-- /.box-header -->
+            <div class="box-body">
+            	<div id="demo">
+                    <div class="search-field">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="org-name">Status</div>
+                            </div>
+                            <div class="col-md-3 col-lg-3">
+                                <input class="form-control" type="text" placeholder="Status" name="param1" id="param1">
+                                <!--input class="form-control" type="radio" placeholder="Approved" name="param1" id="param1" value="1">
+                                <input class="form-control" type="radio" placeholder="All" name="param1" id="param1" value=""-->
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button class="btn btn-primary" onClick="searchData()">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-2">
+                              <div class="org-name">Minimum Likes For Verification</div>
+                          </div>
+                          <div class="col-md-3 col-lg-3">
+                              <input class="form-control" type="number" placeholder="Min Followers" value="<%=minFollowersReqForVerification%>" id="minfollowers">
+                          </div>
+                          <div class="col-md-2">
+                              <div class="form-group">
+                                <input type="button" class="btn btn-success" value="Update" id="updateminfollowerstBtn">
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+              <table id="listAllCostCenter" style="width:100%;" class="table table-bordered">
+                <thead style="width: 100%;">
+                <tr>
+                  <th>User ID</th>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Requested On</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+
+</div>
+  <!-- /.content-wrapper -->
+</div>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="/browser_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+<!-- DataTables -->
+<script src="/browser_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/browser_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#listAllCostCenter').DataTable({
+      'processing' : true,
+      'serverSide' : true,
+      'searching' : false,
+      'ordering' : false,
+      "ajax" : {
+        'url' : 'userverification-getdetails-throughAjax',
+        'data' : function(d) {
+          if($('#param1').val()){
+            let status = $('#param1').val().toUpperCase();
+            if(status === 'APPROVED'){
+              d.param1 = 1;
+            }else if (status === 'PENDING') {
+              d.param1 = 0;
+            }
+          }else {
+            d.param1 = '';
+          }
+        }
+      },
+      'dataSrc' : "",
+      'columns' : [ {
+        'data' : 'userid'
+      }, {
+        'data' : 'username'
+      }, {
+        'data' : 'email'
+      }, {
+        'data' : 'requestedon'
+      },{
+        'data' : 'status'
+      },{
+        'data' : 'action'
+      }
+      ]
+    });
+    $('#updateminfollowerstBtn').on('click',() =>{   
+      updateminfollowers();
+    })
+  });
+  //Method For Searching Records In The List
+    function searchData() {
+        $('#listAllCostCenter').DataTable().draw();
+    }
+
+  function verifyUser(id) {
+    swal.fire({
+      title: "Are you sure want to Verify?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#77e790",
+      confirmButtonText: "Submit",
+      showLoaderOnConfirm: true,
+      reverseButtons: true,
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: 'Cancel',
+      cancelButtonAriaLabel: 'Thumbs down',
+      preConfirm: () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              console.log("Doing async operation");
+              resolve()
+            }, 2000)
+          })
+        }
+      }).then((result) => {
+        if (result.value) {
+          var data = {
+            userid:id,
+            _csrf:$('#csrf').val()
+          };
+          $.ajax({
+            url:'userverification-verify',
+            method:'post',
+            data:data,
+            success:function(res){
+              if(res.message == 'success'){
+                swal.fire({
+                  title: 'Done',
+                  text: "Verified Successfully",
+                  type: "success",
+                }).then(res=>{location.reload();});
+              }else{
+                swal.fire({
+                  title: res.message,
+                  text: "Plese Try after some time",
+                  type: "warning",
+                })
+              }
+            },
+            error:function (err) {
+              console.error(err);
+              swal.fire({
+                title: 'Something Went Wrong',
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          })
+        }
+      });
+    }
+
+    function updateminfollowers() {
+      if($('#minfollowers').val()){
+        var data = {
+          minfollowers:$('#minfollowers').val(),
+          _csrf:$('#csrf').val()
+        };
+        $.ajax({
+          url:'userverification-updateminfollowers',
+          method:'post',
+          data:data,
+          success:function(res){
+            if(res.message == 'success'){
+              swal.fire({
+                title: 'Done',
+                text: "Data Saved Successfully",
+                type: "success",
+              }).then(res=>{$('#minfollowers').val(res.body.minfollowers)});
+            }else{
+              swal.fire({
+                title: res.message,
+                text: "Plese Try after some time",
+                type: "warning",
+              })
+            }
+          },
+          error:function (err) {
+            console.error(err);
+            swal.fire({
+              title: 'Something Went Wrong',
+              text: "Plese Try after some time",
+              type: "warning",
+            })
+          }
+        })
+      }else {
+        swal('Enter A Valid Amount');
+      }
+    }
+</script>
+<script src="/frontend/js/adminside.js"></script>
+<!-- End Browser Link -->
+
+</body>
+
+</html>

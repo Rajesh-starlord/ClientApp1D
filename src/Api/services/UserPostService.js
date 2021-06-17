@@ -72,7 +72,7 @@ const UserPostService = {
       start = ((parseInt(start) * 10) - 10) + 1;
     }
     try{
-      querytext = 'select u.username,u.userid,u.profileimg,u.firebasetoken,' +
+      querytext = 'select u.username,u.userid,u.profileimg,u.firebasetoken,u.isofficial,' +
         'post.postid,post.posttitle,post.postdesc,post.filename,' +
         'post.filepath,post.likes,post.dislikes,post.likedby,post.dislikedby,post.comments,' +
         'post.postedby,post.postedon,post.posttype,' +

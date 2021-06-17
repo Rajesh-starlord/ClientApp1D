@@ -260,6 +260,24 @@ router.post('/mapusertoken',async function(req, res, next) {
   res.send(response);
 });
 
+/********************** reqForVerifiedId *****************************************/
+router.post('/reqForVerifiedId',async function(req, res, next) {
+  var response = {message:"",status:'',body:[]};
+  if(req.body.userId){
+    try {
+      response = await UserService.reqForVerifiedId(req.body.userId);
+    } catch (e) {
+      response.message = 'internal server error...';
+      response.status = "failed";
+      console.log(e);
+    }
+  }else{
+    response.message = 'Insufficient data';
+    response.status = "failed";
+  }
+  res.send(response);
+});
+
 /************ logout ***************/
 router.get('/logout',async function(req, res, next) {
   //req.session.destroy();
