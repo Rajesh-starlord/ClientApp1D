@@ -266,7 +266,7 @@ router.get('/getfollowers',async function (req,res) {
     console.log(e);
   }
   res.send(response);
-})
+});
 
 router.get('/getfollowings',async function (req,res) {
   var userId = req.query.userId;
@@ -277,6 +277,6 @@ router.get('/getfollowings',async function (req,res) {
     console.log(e);
   }
   res.send(response);
-})
+});
 
 module.exports = router;

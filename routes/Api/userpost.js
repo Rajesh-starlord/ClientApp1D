@@ -338,7 +338,20 @@ router.post('/deletePost',async function (req,res) {
   //response.message = 'Action.Can\'t proceed,Feature under process';
   //response.status = 'failed';
   res.send(response);
-})
+});
 
+router.get('/getlikes', async function (req, res) {
+  console.log('ROUTE::get Likes called');
+  var postid = req.query.postid;
+  var response = { message: '',status:'', body: [] };
+  try {
+      response = await UserPostService.getLikes(postid);
+  } catch (e) {
+      response.message = response.status = "error";
+      console.log(e);
+  }
+  console.log('ROUTE::get Likes end');
+  res.send(response);
+});
 
 module.exports = router;
