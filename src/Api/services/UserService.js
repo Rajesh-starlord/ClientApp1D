@@ -197,7 +197,7 @@ const UserService = {
 		console.log('UserService--->getAllUsers called')
 		var resp = { status: '', message: '', body: [] };
 		let query = {
-			text: "select * from userdetail",
+			text: "select userid,username,email,mobileno,profileimg,dob,gender,firebasetoken from userdetail",
 			values: []
 		}
 		let result = [];
