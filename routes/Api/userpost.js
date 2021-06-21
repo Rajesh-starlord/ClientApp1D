@@ -91,7 +91,14 @@ router.post('/userpost',uploadPost,async function(req, res, next) {
                 activity:req.body.activity!=='' && req.body.activity !== 'undefined'?parseInt(req.body.activity):1,
                 postType:1
               }
-              response = await UserPostController.savePost(userPostData);
+              try{
+                response = await UserPostController.savePost(userPostData);
+                console.log(response);
+              }catch(e){
+                console.log(e);
+                response.status = 'failed';
+                response.message = 'file upload failed';
+              }
               res.send(response);
             }
         });
