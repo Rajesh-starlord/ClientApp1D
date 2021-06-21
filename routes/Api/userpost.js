@@ -91,8 +91,7 @@ router.post('/userpost',uploadPost,async function(req, res, next) {
                 activity:req.body.activity!=='' && req.body.activity !== 'undefined'?parseInt(req.body.activity):1,
                 postType:1
               }
-              let resp = await UserPostController.savePost(userPostData);
-              response = resp;
+              response = await UserPostController.savePost(userPostData);
               res.send(response);
             }
         });

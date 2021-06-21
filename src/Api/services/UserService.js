@@ -291,28 +291,28 @@ const UserService = {
 		return response;
 	},
 
-  verifyUser:async (userid,VerifiedBy) => {
+	verifyUser: async (userid, VerifiedBy) => {
 		console.log('UserService--->verifyUser called');
-    let response = { status: '', message: '', body: [] };
+		let response = { status: '', message: '', body: [] };
 		let query = {
 			text: "select * from verifyuser($1,$2)",
-			values: [userid,VerifiedBy]
+			values: [userid, VerifiedBy]
 		}
 		try {
 			let result = await dbService.execute(query);
-      if(result !=='string'){
-        if(result && result[0] && result[0].message === 'success'){
-          response.message = response.status = 'success';
-        }else{
-          response.message = result[0].message ? result[0].message : 'failed';
-          response.status = 'failed';
-        }
-      }else{
-        response.message = result;
-        response.status = 'failed';
-      }
+			if (result !== 'string') {
+				if (result && result[0] && result[0].message === 'success') {
+					response.message = response.status = 'success';
+				} else {
+					response.message = result[0].message ? result[0].message : 'failed';
+					response.status = 'failed';
+				}
+			} else {
+				response.message = result;
+				response.status = 'failed';
+			}
 		} catch (e) {
-      response.message = response.status = 'failed';
+			response.message = response.status = 'failed';
 			console.log(e);
 		}
 		return response;
