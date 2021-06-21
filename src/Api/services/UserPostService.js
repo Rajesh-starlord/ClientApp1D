@@ -89,7 +89,7 @@ const UserPostService = {
       }
       querytext += '\'' + userid + '\',';
       querytext = querytext.substring(0, querytext.length - 1) + ') order by post.postedon desc offset ' + start + ' limit 10';
-      // console.log(querytext);
+      console.log(querytext);
       const query = {
         text: querytext,
         values: []
