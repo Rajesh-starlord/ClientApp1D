@@ -16,6 +16,8 @@ const UserController = {
 				response.message = 'login success';
 			}else if(response.status == false){
 				response.message = response.message?response.message:'failed';
+			}else{
+				response.message = response.message?response.message:'failed';
 			}
 		}catch(e){
 			response.message = 'login failed';
