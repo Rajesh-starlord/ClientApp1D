@@ -162,9 +162,10 @@ const UserService = {
 		console.log('UserService--->createUser called')
 		userData.dob = userData.dob ? DateFormatter.getFormattedDate(userData.dob) : '';
 		let query = {
-			text: "call createuser($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)",
-			values: [userData.userId, userData.userName, userData.password, userData.email.replace(/\s+/g, ' ').trim(),
-			userData.mobile, userData.dob, userData.age, userData.gender, userData.state, userData.city]
+			text: "call createuser($1,$2,$3,$4)",
+			values: [userData.userId, userData.userName, userData.mobile, userData.password]
+			//values: [userData.userId, userData.userName, userData.password, userData.email.replace(/\s+/g, ' ').trim(),
+			//userData.mobile, userData.dob, userData.age, userData.gender, userData.state, userData.city]
 		}
 		let status = '';
 		try {

@@ -1,6 +1,8 @@
 const dbService = require('../services/dbService');
 const UserService = require('./UserService');
 const UserPostService = require('./UserPostService');
+const { DateFormatter } = require('../Utils/CommonUtils');
+
 
 const UserProfileService = {
   //save user Post
@@ -33,9 +35,13 @@ const UserProfileService = {
   updateProfileDetails: async (userProfileData) => {
     console.log('API::UserProfileService--->saveUserProfile called');
     let resp = { status: '', message: '', body: [] };
+    userProfileData.dob = userProfileData.dob ? DateFormatter.getFormattedDate(userProfileData.dob) : null;
+    userProfileData.gender = userProfileData.gender ? userProfileData.gender : null;
+    console.log(userProfileData.dob);
     let query = {
-      text: "update userdetail set userid = $1,userName = $2 where userid = $3",
-      values: [userProfileData.newUserId, userProfileData.userName, userProfileData.userId]
+      text: "update userdetail set email = $1, userName = $2, dob = $3::date, gender = $4 where userid = $5",
+      values: [userProfileData.email, userProfileData.userName,
+               userProfileData.dob,userProfileData.gender,userProfileData.userId]
     }
     try {
       var result = await dbService.executeUpdate(query);

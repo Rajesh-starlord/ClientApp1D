@@ -34,15 +34,15 @@ router.post('/login', async function(req, res, next) {
 router.post('/register', async function(req, res, next) {
   var response = {status:'',message:'',body:[]};
   var userData = req.body;
-  var email = userData.email;
+  // var email = userData.email;
   var mobile = userData.mobile;
   var userId = userData.userId;
   const otp = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
   try {
     let res = await UserService.isUserExists(userId);
     if(!res.status){
-      let emailChk = await UserService.chkDuplicateEmail(email);
-      if(!emailChk.status){
+      // let emailChk = await UserService.chkDuplicateEmail(email);
+      // if(!emailChk.status){
         let mobileChk = await UserService.chkDuplicateMobileNo(mobile);
         if(!mobileChk.status){
     
@@ -55,9 +55,9 @@ router.post('/register', async function(req, res, next) {
         }else {
           response.message = 'Mobile no Already Exists';
         }
-      }else{
-        response.message = 'Email Already Exists';
-      }
+      // }else{
+        // response.message = 'Email Already Exists';
+      // }
     }else {
       response.message = 'UserID Already Exists';
     }
@@ -91,7 +91,7 @@ router.post('/signup', async function(req, res, next) {
     userData.city,
   );
   var dateChacked = true;
-  if(userData.dob){
+  /*if(userData.dob){
     if(userData.dob.split('/').length === 3){
       if(newUser.age < 15){
         dateChacked = false;
@@ -101,7 +101,7 @@ router.post('/signup', async function(req, res, next) {
       dateChacked = false;
 			message = "Invalid Date";
 		}
-  }
+  }*/
   if(dateChacked){
     try {
       response = await UserController.createUser(newUser);

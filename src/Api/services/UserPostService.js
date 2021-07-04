@@ -72,7 +72,7 @@ const UserPostService = {
       start = ((parseInt(start) * 10) - 10) + 1;
     }
     try{
-      querytext = 'select u.username,u.userid,u.profileimg,u.firebasetoken,u.isofficial,' +
+      /*querytext = 'select u.username,u.userid,u.profileimg,u.firebasetoken,u.isofficial,' +
         'post.postid,post.posttitle,post.postdesc,post.filename,' +
         'post.filepath,post.likes,post.dislikes,post.likedby,post.dislikedby,post.comments,' +
         'post.postedby,post.postedon,post.posttype,' +
@@ -90,6 +90,14 @@ const UserPostService = {
       querytext += '\'' + userid + '\',';
       querytext = querytext.substring(0, querytext.length - 1) + ') order by post.postedon desc offset ' + start + ' limit 10';
       console.log(querytext);
+      */
+      let querytext = 'select u.username,u.userid,u.profileimg,u.firebasetoken,u.isofficial,' +
+      'post.postid,post.posttitle,post.postdesc,post.filename,' +
+      'post.filepath,post.likes,post.dislikes,post.likedby,post.dislikedby,post.comments,' +
+      'post.postedby,post.postedon,post.posttype,' +
+      '(select act.activity from activity as act where act.serialno = post.activity)' +
+      'from userposts as post join userdetail as u on u.userid = post.postedby ' +
+      'where post.deletedflag = 0 order by post.postedon desc offset ' + start + ' limit 10';
       const query = {
         text: querytext,
         values: []

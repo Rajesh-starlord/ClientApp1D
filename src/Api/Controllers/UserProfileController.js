@@ -20,14 +20,16 @@ const UserProfileController = {
     console.log('API::UserProfileController--->updateProfileDetails called');
     var response = {status:'',message:'',body:[]};
     try{
-      let userchk = '';
-      if(userProfileData.userId != userProfileData.newUserId){
-          userchk = await UserService.isUserExists(userProfileData.newUserId);
-      }
-      if(!userchk.status){
+      let emailchk = '';
+      if (userProfileData.email) {
+        emailchk = await UserService.chkDuplicateEmail(userProfileData.email);
+        if (emailchk && !emailchk.status) {
           response = await UserProfileService.updateProfileDetails(userProfileData);
-      }else {
-        response.message = 'UserID Already Exists';
+        } else {
+          response.message = 'Email Already Exists';
+        }
+      } else {
+        response = await UserProfileService.updateProfileDetails(userProfileData);
       }
     } catch (e) {
       response.status = 'failed';

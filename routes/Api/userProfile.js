@@ -233,6 +233,15 @@ router.post('/updateProfile',async function(req, res, next) {
   }else if(!userData.userName){
     message = 'userName required';
   }
+  if(userData.dob){
+    if(userData.dob.split('/').length === 3){
+      if(parseInt(userData.dob.split('/')[1]) > 12){
+        message = "Invalid Date Format Currrect Format is dd/mm/yyyy";
+      }
+		}else{
+      message = "Invalid Date Format Currrect Format is dd/mm/yyyy";
+    }
+  }
   if(message == ''){
     if(userData.userId && userData.userName  && userData.newUserId){
       try {
